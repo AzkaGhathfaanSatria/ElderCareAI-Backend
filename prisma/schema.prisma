@@ -1,0 +1,335 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  admin
+  keluarga
+  tenaga_medis
+}
+
+enum DeviceStatus {
+  aktif
+  nonaktif
+}
+
+enum SensorType {
+  gerak
+  pintu
+}
+
+enum AlertSeverity {
+  rendah
+  sedang
+  tinggi
+}
+
+enum AlertStatus {
+  baru
+  ditindaklanjuti
+  selesai
+}
+
+enum NotificationChannel {
+  dashboard
+  push
+  whatsapp
+  email
+}
+
+enum NotificationStatus {
+  terkirim
+  gagal
+  pending
+}
+
+model User {
+  id            Int      @id @default(autoincrement()) @map("id_user")
+  nama          String   @db.VarChar(100)
+  email         String   @unique @db.VarChar(150)
+  password      String   @db.VarChar(255)
+  role          Role     @default(keluarga)
+  noTelepon     String?  @map("no_telepon") @db.VarChar(20)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  lansia        Lansia[]
+  notifikasi    Notification[]
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+
+  @@map("tb_user")
+}
+
+model Lansia {
+  id                Int       @id @default(autoincrement()) @map("id_lansia")
+  idUserKeluarga   Int       @map("id_user_keluarga")
+  nama              String    @db.VarChar(100)
+  tanggalLahir      DateTime  @map("tanggal_lahir") @db.Date
+  alamat            String    @db.VarChar(255)
+  catatanKesehatan  String?   @map("catatan_kesehatan") @db.Text
+
+  userKeluarga  User            @relation(fields: [idUserKeluarga], references: [id])
+  wearables     Wearable[]
+  kamera        Camera[]
+  sensorIot     SensorIot[]
+  baselines     Baseline[]
+  predictions   RiskPrediction[]
+  alerts        Alert[]
+  kejadianJatuh FallEvent[]
+  izinAkses     AccessGrant[]
+  auditLogs     AuditLog[]
+
+  @@map("tb_lansia")
+}
+
+model Wearable {
+  id             Int       @id @default(autoincrement()) @map("id_wearable")
+  idLansia       Int      @map("id_lansia")
+  tipePerangkat  String    @map("tipe_perangkat") @db.VarChar(50)
+  statusBaterai  Int       @default(100) @map("status_baterai")
+  tanggalPairing DateTime  @default(now()) @map("tanggal_pairing") @db.Timestamptz(6)
+  deviceKeyHash  String?   @map("device_key_hash") @db.VarChar(255)
+  lastSeen       DateTime? @map("last_seen") @db.Timestamptz(6)
+
+  lansia       Lansia        @relation(fields: [idLansia], references: [id])
+  dataWearable WearableData[]
+  vitalSigns   VitalSign[]
+
+  @@map("tb_wearable")
+}
+
+model SensorIot {
+  id               Int          @id @default(autoincrement()) @map("id_sensor")
+  idLansia         Int          @map("id_lansia")
+  tipeSensor       SensorType   @map("tipe_sensor")
+  lokasiPemasangan String       @map("lokasi_pemasangan") @db.VarChar(100)
+  status           DeviceStatus @default(aktif)
+
+  lansia    Lansia     @relation(fields: [idLansia], references: [id])
+  aktivitas Activity[]
+
+  @@map("tb_sensor_iot")
+}
+
+model VitalSign {
+  id           BigInt   @id @default(autoincrement()) @map("id_vital")
+  idWearable   Int      @map("id_wearable")
+  detakJantung Int?     @map("detak_jantung")
+  polaTidur    Json?    @map("pola_tidur") @db.JsonB
+  timestamp    DateTime @default(now()) @db.Timestamptz(6)
+
+  wearable Wearable @relation(fields: [idWearable], references: [id])
+
+  @@index([idWearable, timestamp(sort: Desc)])
+  @@map("tb_vital_sign")
+}
+
+model Activity {
+  id             BigInt   @id @default(autoincrement()) @map("id_aktivitas")
+  idSensor       Int      @map("id_sensor")
+  jenisAktivitas String   @map("jenis_aktivitas") @db.VarChar(100)
+  timestamp      DateTime @default(now()) @db.Timestamptz(6)
+
+  sensor SensorIot @relation(fields: [idSensor], references: [id])
+
+  @@index([idSensor, timestamp(sort: Desc)])
+  @@map("tb_data_aktivitas")
+}
+
+model WearableData {
+  id           BigInt   @id @default(autoincrement()) @map("id_data")
+  idWearable   Int      @map("id_wearable")
+  detakJantung Int?     @map("detak_jantung")
+  polaTidur    Json?    @map("pola_tidur") @db.JsonB
+  timestamp    DateTime @default(now()) @db.Timestamptz(6)
+
+  wearable Wearable @relation(fields: [idWearable], references: [id])
+
+  @@unique([idWearable, timestamp])
+  @@index([idWearable, timestamp(sort: Desc)])
+  @@map("tb_data_wearable")
+}
+
+model Baseline {
+  id              Int      @id @default(autoincrement()) @map("id_baseline")
+  idLansia        Int      @map("id_lansia")
+  polaNormal      Json     @map("pola_normal") @db.JsonB
+  versiModel      String   @map("versi_model") @db.VarChar(50)
+  tanggalDibentuk DateTime @default(now()) @map("tanggal_dibentuk") @db.Timestamptz(6)
+
+  lansia      Lansia          @relation(fields: [idLansia], references: [id])
+  predictions RiskPrediction[]
+  alerts      Alert[]
+
+  @@map("tb_baseline_perilaku")
+}
+
+model RiskPrediction {
+  id            BigInt   @id @default(autoincrement()) @map("id_prediksi")
+  idLansia      Int      @map("id_lansia")
+  idBaseline    Int?     @map("id_baseline")
+  skorRisiko    Float    @map("skor_risiko")
+  levelRisiko   String   @map("level_risiko") @db.VarChar(30)
+  waktuPrediksi DateTime @default(now()) @map("waktu_prediksi") @db.Timestamptz(6)
+
+  lansia   Lansia   @relation(fields: [idLansia], references: [id])
+  baseline Baseline? @relation(fields: [idBaseline], references: [id])
+  alerts   Alert[]
+
+  @@map("tb_prediksi_risiko_jatuh")
+}
+
+model Camera {
+  id         Int          @id @default(autoincrement()) @map("id_kamera")
+  idLansia   Int          @map("id_lansia")
+  namaKamera String       @map("nama_kamera") @db.VarChar(100)
+  lokasi     String       @db.VarChar(100)
+  status     DeviceStatus @default(aktif)
+  lastSeen   DateTime?    @map("last_seen") @db.Timestamptz(6)
+
+  lansia     Lansia        @relation(fields: [idLansia], references: [id])
+  detections YoloDetection[]
+
+  @@map("tb_kamera_cctv")
+}
+
+model YoloDetection {
+  id         BigInt   @id @default(autoincrement()) @map("id_deteksi")
+  idKamera   Int?     @map("id_kamera")
+  idLansia   Int      @map("id_lansia")
+  kelas      String   @db.VarChar(50)
+  confidence Float
+  bbox       Json?    @db.JsonB
+  keypoints  Json?    @db.JsonB
+  versiModel String?  @map("versi_model") @db.VarChar(50)
+  timestamp  DateTime @default(now()) @db.Timestamptz(6)
+
+  kamera      Camera?      @relation(fields: [idKamera], references: [id])
+  kejadianJatuh FallEvent[]
+
+  @@index([idLansia, timestamp(sort: Desc)])
+  @@map("tb_deteksi_yolo")
+}
+
+model FallEvent {
+  id            BigInt   @id @default(autoincrement()) @map("id_jatuh")
+  idLansia      Int      @map("id_lansia")
+  idDeteksi     BigInt?  @map("id_deteksi")
+  waktuKejadian DateTime @default(now()) @map("waktu_kejadian") @db.Timestamptz(6)
+  konfirmasi    Boolean? @map("konfirmasi")
+  falseAlarm    Boolean? @map("false_alarm")
+
+  lansia  Lansia         @relation(fields: [idLansia], references: [id])
+  deteksi YoloDetection? @relation(fields: [idDeteksi], references: [id])
+  alerts  Alert[]
+
+  @@map("tb_kejadian_jatuh")
+}
+
+model Alert {
+  id              BigInt        @id @default(autoincrement()) @map("id_alert")
+  idLansia        Int           @map("id_lansia")
+  idBaseline      Int?          @map("id_baseline")
+  idPrediksi      BigInt?       @map("id_prediksi")
+  idJatuh         BigInt?       @map("id_jatuh")
+  jenisAnomali    String        @map("jenis_anomali") @db.VarChar(100)
+  tingkatKeparahan AlertSeverity @map("tingkat_keparahan")
+  waktuDeteksi    DateTime      @default(now()) @map("waktu_deteksi") @db.Timestamptz(6)
+  status          AlertStatus   @default(baru)
+  dedupKey        String?       @unique @map("dedup_key") @db.VarChar(255)
+
+  lansia     Lansia          @relation(fields: [idLansia], references: [id])
+  baseline   Baseline?       @relation(fields: [idBaseline], references: [id])
+  prediction RiskPrediction? @relation(fields: [idPrediksi], references: [id])
+  fall       FallEvent?      @relation(fields: [idJatuh], references: [id])
+  notifications Notification[]
+
+  @@index([idLansia, waktuDeteksi(sort: Desc)])
+  @@map("tb_alert")
+}
+
+model Notification {
+  id             BigInt             @id @default(autoincrement()) @map("id_notifikasi")
+  idAlert        BigInt             @map("id_alert")
+  idUserPenerima Int                @map("id_user_penerima")
+  channel        NotificationChannel
+  waktuKirim     DateTime?          @map("waktu_kirim") @db.Timestamptz(6)
+  statusBaca     Boolean            @default(false) @map("status_baca")
+  status         NotificationStatus @default(pending)
+  percobaanKe    Int                @default(0) @map("percobaan_ke")
+  errorPesan     String?            @map("error_pesan") @db.Text
+
+  alert    Alert @relation(fields: [idAlert], references: [id])
+  penerima User  @relation(fields: [idUserPenerima], references: [id])
+
+  @@map("tb_notifikasi")
+}
+
+model AccessGrant {
+  id          Int       @id @default(autoincrement()) @map("id_izin")
+  idLansia    Int       @map("id_lansia")
+  idUserMedis Int       @map("id_user_medis")
+  status      String    @default("aktif") @db.VarChar(20)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  expiresAt   DateTime? @map("expires_at") @db.Timestamptz(6)
+
+  lansia Lansia @relation(fields: [idLansia], references: [id])
+
+  @@unique([idLansia, idUserMedis])
+  @@map("tb_izin_akses")
+}
+
+model NotificationPreference {
+  id           Int      @id @default(autoincrement()) @map("id_preferensi")
+  idUser       Int      @unique @map("id_user")
+  dashboard    Boolean  @default(true)
+  push         Boolean  @default(true)
+  whatsapp     Boolean  @default(false)
+  email        Boolean  @default(false)
+  levelMinimum String   @default("sedang") @map("level_minimum") @db.VarChar(20)
+
+  @@map("tb_preferensi_notifikasi")
+}
+
+model PushToken {
+  id        Int      @id @default(autoincrement()) @map("id_token")
+  idUser    Int      @map("id_user")
+  token     String   @unique @db.VarChar(500)
+  platform  String?  @db.VarChar(30)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("tb_token_push")
+}
+
+model RefreshToken {
+  id        BigInt    @id @default(autoincrement()) @map("id_refresh_token")
+  idUser    Int       @map("id_user")
+  tokenHash String    @map("token_hash") @db.VarChar(255)
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [idUser], references: [id])
+
+  @@map("tb_refresh_token")
+}
+
+model AuditLog {
+  id        BigInt   @id @default(autoincrement()) @map("id_audit")
+  idUser    Int?     @map("id_user")
+  idLansia  Int?     @map("id_lansia")
+  action    String   @db.VarChar(100)
+  details   Json?    @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user   User?   @relation(fields: [idUser], references: [id])
+  lansia Lansia? @relation(fields: [idLansia], references: [id])
+
+  @@index([createdAt(sort: Desc)])
+  @@map("tb_audit_log")
+}
