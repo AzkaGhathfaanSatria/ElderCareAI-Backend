@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./modules/auth/auth.routes";
 import monitoringRoutes from "./modules/monitoring/monitoring.routes";
+import managementRoutes from "./modules/monitoring/management.routes";
 
 const app = express();
 
@@ -23,5 +24,6 @@ app.get("/health", (_req, res) => {
 
 app.use("/auth", authRoutes);
 app.use("/", monitoringRoutes);
+app.use("/", managementRoutes);
 
 export default app;
