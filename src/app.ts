@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import authRoutes from "./modules/auth/auth.routes";
+import monitoringRoutes from "./modules/monitoring/monitoring.routes";
 
 const app = express();
 
@@ -21,5 +22,6 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/auth", authRoutes);
+app.use("/", monitoringRoutes);
 
 export default app;

@@ -18,7 +18,6 @@ export async function register(
 ) {
   try {
     const data = registerSchema.parse(req.body);
-
     const user = await registerUser(data);
 
     return res.status(201).json({
@@ -112,6 +111,8 @@ export async function getMe(
       data: user,
     });
   } catch (error) {
+    console.error("Gagal mengambil data user:", error);
+
     return res.status(500).json({
       success: false,
       message: "Gagal mengambil data user",
@@ -124,18 +125,19 @@ export async function refresh(
   res: Response
 ) {
   try {
-    const { refreshToken } = req.body;
+    const refreshToken = req.body?.refreshToken;
 
-    if (!refreshToken) {
+    if (
+      typeof refreshToken !== "string" ||
+      refreshToken.trim().length === 0
+    ) {
       return res.status(400).json({
         success: false,
         message: "Refresh token wajib diisi",
       });
     }
 
-    const result = await refreshAccessToken(
-      refreshToken
-    );
+    const result = await refreshAccessToken(refreshToken);
 
     return res.status(200).json({
       success: true,
@@ -143,11 +145,11 @@ export async function refresh(
       data: result,
     });
   } catch (error: any) {
+    console.error("Refresh token gagal:", error.message);
+
     return res.status(401).json({
       success: false,
-      message:
-        error.message ||
-        "Refresh token tidak valid",
+      message: error.message || "Refresh token tidak valid",
     });
   }
 }
@@ -157,9 +159,12 @@ export async function logout(
   res: Response
 ) {
   try {
-    const { refreshToken } = req.body;
+    const refreshToken = req.body?.refreshToken;
 
-    if (!refreshToken) {
+    if (
+      typeof refreshToken !== "string" ||
+      refreshToken.trim().length === 0
+    ) {
       return res.status(400).json({
         success: false,
         message: "Refresh token wajib diisi",
@@ -173,10 +178,11 @@ export async function logout(
       message: "Logout berhasil",
     });
   } catch (error: any) {
+    console.error("Logout gagal:", error.message);
+
     return res.status(400).json({
       success: false,
-      message:
-        error.message || "Logout gagal",
+      message: error.message || "Logout gagal",
     });
   }
 }
