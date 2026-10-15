@@ -1,13 +1,17 @@
 import { Request, Response } from "express";
 import {
+  forgotPasswordSchema,
   loginSchema,
   registerSchema,
+  resetPasswordSchema,
 } from "./auth.schema";
 import {
   loginUser,
   registerUser,
   refreshAccessToken,
   logoutUser,
+  requestPasswordReset,
+  resetPasswordWithToken,
 } from "./auth.service";
 import prisma from "../../lib/prisma";
 import { AuthRequest } from "../../common/middleware/auth.middleware";
@@ -18,6 +22,16 @@ export async function register(
 ) {
   try {
     const data = registerSchema.parse(req.body);
+
+    // Pendaftaran publik tidak boleh membuat admin. Buat admin lewat `npm run create-admin`
+    // (atau set ALLOW_ADMIN_REGISTER=true hanya untuk development).
+    if (data.role === "admin" && process.env.ALLOW_ADMIN_REGISTER !== "true") {
+      return res.status(403).json({
+        success: false,
+        message: "Pendaftaran akun admin tidak diizinkan.",
+      });
+    }
+
     const user = await registerUser(data);
 
     return res.status(201).json({
@@ -184,5 +198,33 @@ export async function logout(
       success: false,
       message: error.message || "Logout gagal",
     });
+  }
+}
+
+export async function forgotPassword(req: Request, res: Response) {
+  const generic = { success: true, message: "Jika email terdaftar, tautan reset password akan dikirim." };
+  try {
+    const { email } = forgotPasswordSchema.parse(req.body);
+    // Diproses di belakang; respons selalu sama supaya email terdaftar tidak bisa ditebak.
+    void requestPasswordReset(email).catch((e) => console.error("requestPasswordReset", e));
+    return res.status(200).json(generic);
+  } catch (error: any) {
+    if (error.name === "ZodError") {
+      return res.status(400).json({ success: false, message: "Email tidak valid" });
+    }
+    return res.status(200).json(generic);
+  }
+}
+
+export async function resetPassword(req: Request, res: Response) {
+  try {
+    const { token, password } = resetPasswordSchema.parse(req.body);
+    await resetPasswordWithToken(token, password);
+    return res.status(200).json({ success: true, message: "Password berhasil diubah. Silakan login." });
+  } catch (error: any) {
+    if (error.name === "ZodError") {
+      return res.status(400).json({ success: false, message: error.issues?.[0]?.message ?? "Data tidak valid" });
+    }
+    return res.status(400).json({ success: false, message: error.message || "Reset password gagal" });
   }
 }

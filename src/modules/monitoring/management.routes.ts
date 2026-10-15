@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import prisma from "../../lib/prisma";
 import { authenticate, AuthRequest } from "../../common/middleware/auth.middleware";
+import { baselineStatus, trainElderBaseline } from "../baseline/baseline.service";
 
 /**
  * Route pelengkap agar semua halaman frontend punya endpoint (data kosong tetap 200, bukan 404):
@@ -34,10 +35,10 @@ const cap = (v: string) => v.charAt(0).toUpperCase() + v.slice(1);
 
 // ---------- preferensi notifikasi & push token ----------
 
-function prefDto(p: { dashboard: boolean; push: boolean; whatsapp: boolean; email: boolean; levelMinimum: string } | null) {
-  const v = p ?? { dashboard: true, push: true, whatsapp: false, email: false, levelMinimum: "sedang" };
+function prefDto(p: { dashboard: boolean; push: boolean; whatsapp: boolean; email: boolean; levelMinimum: string; weeklySummary: boolean } | null) {
+  const v = p ?? { dashboard: true, push: true, whatsapp: false, email: false, levelMinimum: "sedang", weeklySummary: false };
   const channels = (["dashboard", "push", "whatsapp", "email"] as const).filter((c) => v[c]);
-  return { channels, dashboard: v.dashboard, push: v.push, whatsapp: v.whatsapp, email: v.email, weeklySummary: false, minimumLevel: cap(v.levelMinimum), level_minimum: cap(v.levelMinimum) };
+  return { channels, dashboard: v.dashboard, push: v.push, whatsapp: v.whatsapp, email: v.email, weeklySummary: v.weeklySummary, weekly_summary: v.weeklySummary, minimumLevel: cap(v.levelMinimum), level_minimum: cap(v.levelMinimum) };
 }
 
 router.get("/me/notification-preferences", async (req: AuthRequest, res) => {
@@ -57,6 +58,8 @@ router.put("/me/notification-preferences", async (req: AuthRequest, res) => {
         push: z.boolean().optional(),
         whatsapp: z.boolean().optional(),
         dashboard: z.boolean().optional(),
+        weeklySummary: z.boolean().optional(),
+        weekly_summary: z.boolean().optional(),
         minimumLevel: z.string().optional(),
         level_minimum: z.string().optional(),
       })
@@ -64,7 +67,7 @@ router.put("/me/notification-preferences", async (req: AuthRequest, res) => {
       .parse(req.body);
     const lvl = (b.minimumLevel ?? b.level_minimum ?? "").toLowerCase();
     const levelMinimum = ["rendah", "sedang", "tinggi"].includes(lvl) ? lvl : undefined;
-    const data = { email: b.email, push: b.push, whatsapp: b.whatsapp, dashboard: b.dashboard, levelMinimum };
+    const data = { email: b.email, push: b.push, whatsapp: b.whatsapp, dashboard: b.dashboard, levelMinimum, weeklySummary: b.weeklySummary ?? b.weekly_summary };
     const p = await prisma.notificationPreference.upsert({
       where: { idUser: req.user!.userId },
       update: data,
@@ -164,20 +167,19 @@ router.delete("/elders/:id/access-grants", async (req: AuthRequest, res) => {
 });
 
 // ---------- manajemen user (admin) ----------
-// Tabel tb_user belum punya kolom status, jadi semua akun dilaporkan "Aktif".
 
-const userDto = (u: { id: number; nama: string; email: string; role: string; createdAt: Date }) => ({
+const userDto = (u: { id: number; nama: string; email: string; role: string; status: string; createdAt: Date }) => ({
   id: String(u.id),
   nama: u.nama,
   email: u.email,
   role: u.role,
-  status: "Aktif",
+  status: cap(u.status),
   createdAt: u.createdAt.toISOString(),
 });
 
 router.get("/users", requireAdmin, async (_req, res) => {
   try {
-    const users = await prisma.user.findMany({ orderBy: { id: "asc" }, select: { id: true, nama: true, email: true, role: true, createdAt: true } });
+    const users = await prisma.user.findMany({ orderBy: { id: "asc" }, select: { id: true, nama: true, email: true, role: true, status: true, createdAt: true } });
     return res.json({ data: users.map(userDto) });
   } catch (e) {
     return fail(res, e, "Gagal mengambil pengguna");
@@ -202,7 +204,7 @@ router.post("/users", requireAdmin, async (req, res) => {
     }
     const u = await prisma.user.create({
       data: { nama, email: b.email, password: await bcrypt.hash(b.password, 10), role: b.role },
-      select: { id: true, nama: true, email: true, role: true, createdAt: true },
+      select: { id: true, nama: true, email: true, role: true, status: true, createdAt: true },
     });
     return res.status(201).json({ user: userDto(u) });
   } catch (e) {
@@ -218,14 +220,27 @@ router.patch("/users/:id", requireAdmin, async (req, res) => {
         nama: z.string().min(2).max(100).optional(),
         email: z.string().email().max(150).optional(),
         role: z.enum(["admin", "keluarga", "tenaga_medis"]).optional(),
+        status: z.string().optional(),
       })
       .passthrough()
       .parse(req.body);
+    const targetId = Number(req.params.id);
+    const status = b.status === undefined ? undefined : b.status.toLowerCase();
+    if (status !== undefined && status !== "aktif" && status !== "nonaktif") {
+      return res.status(400).json({ success: false, message: "Status harus Aktif atau Nonaktif" });
+    }
+    if (status === "nonaktif" && targetId === (req as AuthRequest).user!.userId) {
+      return res.status(400).json({ success: false, message: "Tidak dapat menonaktifkan akun sendiri" });
+    }
     const u = await prisma.user.update({
-      where: { id: Number(req.params.id) },
-      data: { nama: b.nama ?? b.name, email: b.email, role: b.role },
-      select: { id: true, nama: true, email: true, role: true, createdAt: true },
+      where: { id: targetId },
+      data: { nama: b.nama ?? b.name, email: b.email, role: b.role, status },
+      select: { id: true, nama: true, email: true, role: true, status: true, createdAt: true },
     });
+    // Akun dinonaktifkan: cabut semua sesi (refresh token) supaya tidak bisa memperpanjang akses.
+    if (status === "nonaktif") {
+      await prisma.refreshToken.updateMany({ where: { idUser: targetId, revokedAt: null }, data: { revokedAt: new Date() } });
+    }
     return res.json({ user: userDto(u) });
   } catch (e: any) {
     if (e?.code === "P2025") return res.status(404).json({ success: false, message: "Pengguna tidak ditemukan" });
@@ -252,6 +267,67 @@ router.delete("/users/:id", requireAdmin, async (req: AuthRequest, res) => {
   }
 });
 
+// ---------- baseline perilaku per lansia ----------
+
+async function readableElder(req: AuthRequest, res: any) {
+  const id = Number(req.params.id);
+  const elder = Number.isInteger(id) ? await prisma.lansia.findFirst({ where: { id, ...accessibleElderWhere(req.user!) } }) : null;
+  if (!elder) res.status(404).json({ success: false, message: "Lansia tidak ditemukan" });
+  return elder;
+}
+
+router.get("/elders/:id/baseline", async (req: AuthRequest, res) => {
+  try {
+    const elder = await readableElder(req, res);
+    if (!elder) return;
+    return res.json(await baselineStatus(elder.id));
+  } catch (e) {
+    return fail(res, e, "Gagal mengambil baseline");
+  }
+});
+
+router.post("/elders/:id/baseline/train", async (req: AuthRequest, res) => {
+  try {
+    if (req.user!.role === "tenaga_medis") {
+      return res.status(403).json({ success: false, message: "Hanya keluarga atau admin yang dapat memperbarui baseline" });
+    }
+    const elder = await readableElder(req, res);
+    if (!elder) return;
+    const result = await trainElderBaseline(elder.id);
+    if (!result.ok) return res.status(result.code).json({ success: false, message: result.reason });
+    return res.json({ success: true, ...(await baselineStatus(elder.id)) });
+  } catch (e) {
+    return fail(res, e, "Gagal memperbarui baseline");
+  }
+});
+
+// ---------- status baca notifikasi ----------
+
+router.patch("/notifications/:id/read", async (req: AuthRequest, res) => {
+  try {
+    const result = await prisma.notification.updateMany({
+      where: { id: BigInt(req.params.id as string), idUserPenerima: req.user!.userId },
+      data: { statusBaca: true },
+    });
+    if (result.count === 0) return res.status(404).json({ success: false, message: "Notifikasi tidak ditemukan" });
+    return res.json({ success: true });
+  } catch (e) {
+    return fail(res, e, "Gagal menandai notifikasi");
+  }
+});
+
+router.post("/notifications/read-all", async (req: AuthRequest, res) => {
+  try {
+    const result = await prisma.notification.updateMany({
+      where: { idUserPenerima: req.user!.userId, statusBaca: false },
+      data: { statusBaca: true },
+    });
+    return res.json({ success: true, updated: result.count });
+  } catch (e) {
+    return fail(res, e, "Gagal menandai notifikasi");
+  }
+});
+
 // ---------- alert & konfirmasi jatuh ----------
 
 router.patch("/alerts/:id", async (req: AuthRequest, res) => {
@@ -272,6 +348,8 @@ router.patch("/falls/:id/confirm", async (req: AuthRequest, res) => {
     const fall = await prisma.fallEvent.findFirst({ where: { id: BigInt(req.params.id as string), lansia: accessibleElderWhere(req.user!) } });
     if (!fall) return res.status(404).json({ success: false, message: "Kejadian jatuh tidak ditemukan" });
     await prisma.fallEvent.update({ where: { id: fall.id }, data: { konfirmasi: confirmed, falseAlarm: !confirmed } });
+    // Terkonfirmasi -> alert ditindaklanjuti; alarm palsu -> alert selesai (hilang dari dashboard).
+    await prisma.alert.updateMany({ where: { idJatuh: fall.id }, data: { status: confirmed ? "ditindaklanjuti" : "selesai" } });
     return res.json({ success: true });
   } catch (e) {
     return fail(res, e, "Gagal mengonfirmasi kejadian jatuh");

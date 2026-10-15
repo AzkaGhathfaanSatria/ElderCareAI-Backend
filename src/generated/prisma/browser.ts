@@ -108,6 +108,11 @@ export type PushToken = Prisma.PushTokenModel
  */
 export type RefreshToken = Prisma.RefreshTokenModel
 /**
+ * Model PasswordResetToken
+ * 
+ */
+export type PasswordResetToken = Prisma.PasswordResetTokenModel
+/**
  * Model AuditLog
  * 
  */

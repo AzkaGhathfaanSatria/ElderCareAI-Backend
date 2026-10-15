@@ -415,6 +415,7 @@ export const ModelName = {
   NotificationPreference: 'NotificationPreference',
   PushToken: 'PushToken',
   RefreshToken: 'RefreshToken',
+  PasswordResetToken: 'PasswordResetToken',
   AuditLog: 'AuditLog'
 } as const
 
@@ -431,7 +432,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "lansia" | "wearable" | "sensorIot" | "vitalSign" | "activity" | "wearableData" | "baseline" | "riskPrediction" | "camera" | "yoloDetection" | "fallEvent" | "alert" | "notification" | "accessGrant" | "notificationPreference" | "pushToken" | "refreshToken" | "auditLog"
+    modelProps: "user" | "lansia" | "wearable" | "sensorIot" | "vitalSign" | "activity" | "wearableData" | "baseline" | "riskPrediction" | "camera" | "yoloDetection" | "fallEvent" | "alert" | "notification" | "accessGrant" | "notificationPreference" | "pushToken" | "refreshToken" | "passwordResetToken" | "auditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1767,6 +1768,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PasswordResetToken: {
+      payload: Prisma.$PasswordResetTokenPayload<ExtArgs>
+      fields: Prisma.PasswordResetTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PasswordResetTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PasswordResetTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.PasswordResetTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PasswordResetTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        findMany: {
+          args: Prisma.PasswordResetTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        create: {
+          args: Prisma.PasswordResetTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        createMany: {
+          args: Prisma.PasswordResetTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PasswordResetTokenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        delete: {
+          args: Prisma.PasswordResetTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        update: {
+          args: Prisma.PasswordResetTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.PasswordResetTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PasswordResetTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PasswordResetTokenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        upsert: {
+          args: Prisma.PasswordResetTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.PasswordResetTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePasswordResetToken>
+        }
+        groupBy: {
+          args: Prisma.PasswordResetTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PasswordResetTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetTokenCountAggregateOutputType> | number
+        }
+      }
+    }
     AuditLog: {
       payload: Prisma.$AuditLogPayload<ExtArgs>
       fields: Prisma.AuditLogFieldRefs
@@ -1887,6 +1962,7 @@ export const UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   noTelepon: 'noTelepon',
+  status: 'status',
   createdAt: 'createdAt'
 } as const
 
@@ -1955,7 +2031,12 @@ export const WearableDataScalarFieldEnum = {
   idWearable: 'idWearable',
   detakJantung: 'detakJantung',
   polaTidur: 'polaTidur',
-  timestamp: 'timestamp'
+  timestamp: 'timestamp',
+  oxygenLevel: 'oxygenLevel',
+  temperature: 'temperature',
+  accelerationMagnitude: 'accelerationMagnitude',
+  gyroMagnitude: 'gyroMagnitude',
+  heartRateVariability: 'heartRateVariability'
 } as const
 
 export type WearableDataScalarFieldEnum = (typeof WearableDataScalarFieldEnum)[keyof typeof WearableDataScalarFieldEnum]
@@ -1990,7 +2071,8 @@ export const CameraScalarFieldEnum = {
   namaKamera: 'namaKamera',
   lokasi: 'lokasi',
   status: 'status',
-  lastSeen: 'lastSeen'
+  lastSeen: 'lastSeen',
+  deviceKeyHash: 'deviceKeyHash'
 } as const
 
 export type CameraScalarFieldEnum = (typeof CameraScalarFieldEnum)[keyof typeof CameraScalarFieldEnum]
@@ -2073,7 +2155,8 @@ export const NotificationPreferenceScalarFieldEnum = {
   push: 'push',
   whatsapp: 'whatsapp',
   email: 'email',
-  levelMinimum: 'levelMinimum'
+  levelMinimum: 'levelMinimum',
+  weeklySummary: 'weeklySummary'
 } as const
 
 export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
@@ -2100,6 +2183,18 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  idUser: 'idUser',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
 export const AuditLogScalarFieldEnum = {
@@ -2525,6 +2620,7 @@ export type GlobalOmitConfig = {
   notificationPreference?: Prisma.NotificationPreferenceOmit
   pushToken?: Prisma.PushTokenOmit
   refreshToken?: Prisma.RefreshTokenOmit
+  passwordResetToken?: Prisma.PasswordResetTokenOmit
   auditLog?: Prisma.AuditLogOmit
 }
 

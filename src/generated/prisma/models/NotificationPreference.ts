@@ -44,6 +44,7 @@ export type NotificationPreferenceMinAggregateOutputType = {
   whatsapp: boolean | null
   email: boolean | null
   levelMinimum: string | null
+  weeklySummary: boolean | null
 }
 
 export type NotificationPreferenceMaxAggregateOutputType = {
@@ -54,6 +55,7 @@ export type NotificationPreferenceMaxAggregateOutputType = {
   whatsapp: boolean | null
   email: boolean | null
   levelMinimum: string | null
+  weeklySummary: boolean | null
 }
 
 export type NotificationPreferenceCountAggregateOutputType = {
@@ -64,6 +66,7 @@ export type NotificationPreferenceCountAggregateOutputType = {
   whatsapp: number
   email: number
   levelMinimum: number
+  weeklySummary: number
   _all: number
 }
 
@@ -86,6 +89,7 @@ export type NotificationPreferenceMinAggregateInputType = {
   whatsapp?: true
   email?: true
   levelMinimum?: true
+  weeklySummary?: true
 }
 
 export type NotificationPreferenceMaxAggregateInputType = {
@@ -96,6 +100,7 @@ export type NotificationPreferenceMaxAggregateInputType = {
   whatsapp?: true
   email?: true
   levelMinimum?: true
+  weeklySummary?: true
 }
 
 export type NotificationPreferenceCountAggregateInputType = {
@@ -106,6 +111,7 @@ export type NotificationPreferenceCountAggregateInputType = {
   whatsapp?: true
   email?: true
   levelMinimum?: true
+  weeklySummary?: true
   _all?: true
 }
 
@@ -203,6 +209,7 @@ export type NotificationPreferenceGroupByOutputType = {
   whatsapp: boolean
   email: boolean
   levelMinimum: string
+  weeklySummary: boolean
   _count: NotificationPreferenceCountAggregateOutputType | null
   _avg: NotificationPreferenceAvgAggregateOutputType | null
   _sum: NotificationPreferenceSumAggregateOutputType | null
@@ -236,6 +243,7 @@ export type NotificationPreferenceWhereInput = {
   whatsapp?: Prisma.BoolFilter<"NotificationPreference"> | boolean
   email?: Prisma.BoolFilter<"NotificationPreference"> | boolean
   levelMinimum?: Prisma.StringFilter<"NotificationPreference"> | string
+  weeklySummary?: Prisma.BoolFilter<"NotificationPreference"> | boolean
 }
 
 export type NotificationPreferenceOrderByWithRelationInput = {
@@ -246,6 +254,7 @@ export type NotificationPreferenceOrderByWithRelationInput = {
   whatsapp?: Prisma.SortOrder
   email?: Prisma.SortOrder
   levelMinimum?: Prisma.SortOrder
+  weeklySummary?: Prisma.SortOrder
 }
 
 export type NotificationPreferenceWhereUniqueInput = Prisma.AtLeast<{
@@ -259,6 +268,7 @@ export type NotificationPreferenceWhereUniqueInput = Prisma.AtLeast<{
   whatsapp?: Prisma.BoolFilter<"NotificationPreference"> | boolean
   email?: Prisma.BoolFilter<"NotificationPreference"> | boolean
   levelMinimum?: Prisma.StringFilter<"NotificationPreference"> | string
+  weeklySummary?: Prisma.BoolFilter<"NotificationPreference"> | boolean
 }, "id" | "idUser">
 
 export type NotificationPreferenceOrderByWithAggregationInput = {
@@ -269,6 +279,7 @@ export type NotificationPreferenceOrderByWithAggregationInput = {
   whatsapp?: Prisma.SortOrder
   email?: Prisma.SortOrder
   levelMinimum?: Prisma.SortOrder
+  weeklySummary?: Prisma.SortOrder
   _count?: Prisma.NotificationPreferenceCountOrderByAggregateInput
   _avg?: Prisma.NotificationPreferenceAvgOrderByAggregateInput
   _max?: Prisma.NotificationPreferenceMaxOrderByAggregateInput
@@ -287,6 +298,7 @@ export type NotificationPreferenceScalarWhereWithAggregatesInput = {
   whatsapp?: Prisma.BoolWithAggregatesFilter<"NotificationPreference"> | boolean
   email?: Prisma.BoolWithAggregatesFilter<"NotificationPreference"> | boolean
   levelMinimum?: Prisma.StringWithAggregatesFilter<"NotificationPreference"> | string
+  weeklySummary?: Prisma.BoolWithAggregatesFilter<"NotificationPreference"> | boolean
 }
 
 export type NotificationPreferenceCreateInput = {
@@ -296,6 +308,7 @@ export type NotificationPreferenceCreateInput = {
   whatsapp?: boolean
   email?: boolean
   levelMinimum?: string
+  weeklySummary?: boolean
 }
 
 export type NotificationPreferenceUncheckedCreateInput = {
@@ -306,6 +319,7 @@ export type NotificationPreferenceUncheckedCreateInput = {
   whatsapp?: boolean
   email?: boolean
   levelMinimum?: string
+  weeklySummary?: boolean
 }
 
 export type NotificationPreferenceUpdateInput = {
@@ -315,6 +329,7 @@ export type NotificationPreferenceUpdateInput = {
   whatsapp?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.BoolFieldUpdateOperationsInput | boolean
   levelMinimum?: Prisma.StringFieldUpdateOperationsInput | string
+  weeklySummary?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type NotificationPreferenceUncheckedUpdateInput = {
@@ -325,6 +340,7 @@ export type NotificationPreferenceUncheckedUpdateInput = {
   whatsapp?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.BoolFieldUpdateOperationsInput | boolean
   levelMinimum?: Prisma.StringFieldUpdateOperationsInput | string
+  weeklySummary?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type NotificationPreferenceCreateManyInput = {
@@ -335,6 +351,7 @@ export type NotificationPreferenceCreateManyInput = {
   whatsapp?: boolean
   email?: boolean
   levelMinimum?: string
+  weeklySummary?: boolean
 }
 
 export type NotificationPreferenceUpdateManyMutationInput = {
@@ -344,6 +361,7 @@ export type NotificationPreferenceUpdateManyMutationInput = {
   whatsapp?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.BoolFieldUpdateOperationsInput | boolean
   levelMinimum?: Prisma.StringFieldUpdateOperationsInput | string
+  weeklySummary?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type NotificationPreferenceUncheckedUpdateManyInput = {
@@ -354,6 +372,7 @@ export type NotificationPreferenceUncheckedUpdateManyInput = {
   whatsapp?: Prisma.BoolFieldUpdateOperationsInput | boolean
   email?: Prisma.BoolFieldUpdateOperationsInput | boolean
   levelMinimum?: Prisma.StringFieldUpdateOperationsInput | string
+  weeklySummary?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type NotificationPreferenceCountOrderByAggregateInput = {
@@ -364,6 +383,7 @@ export type NotificationPreferenceCountOrderByAggregateInput = {
   whatsapp?: Prisma.SortOrder
   email?: Prisma.SortOrder
   levelMinimum?: Prisma.SortOrder
+  weeklySummary?: Prisma.SortOrder
 }
 
 export type NotificationPreferenceAvgOrderByAggregateInput = {
@@ -379,6 +399,7 @@ export type NotificationPreferenceMaxOrderByAggregateInput = {
   whatsapp?: Prisma.SortOrder
   email?: Prisma.SortOrder
   levelMinimum?: Prisma.SortOrder
+  weeklySummary?: Prisma.SortOrder
 }
 
 export type NotificationPreferenceMinOrderByAggregateInput = {
@@ -389,6 +410,7 @@ export type NotificationPreferenceMinOrderByAggregateInput = {
   whatsapp?: Prisma.SortOrder
   email?: Prisma.SortOrder
   levelMinimum?: Prisma.SortOrder
+  weeklySummary?: Prisma.SortOrder
 }
 
 export type NotificationPreferenceSumOrderByAggregateInput = {
@@ -406,6 +428,7 @@ export type NotificationPreferenceSelect<ExtArgs extends runtime.Types.Extension
   whatsapp?: boolean
   email?: boolean
   levelMinimum?: boolean
+  weeklySummary?: boolean
 }, ExtArgs["result"]["notificationPreference"]>
 
 export type NotificationPreferenceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -416,6 +439,7 @@ export type NotificationPreferenceSelectCreateManyAndReturn<ExtArgs extends runt
   whatsapp?: boolean
   email?: boolean
   levelMinimum?: boolean
+  weeklySummary?: boolean
 }, ExtArgs["result"]["notificationPreference"]>
 
 export type NotificationPreferenceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -426,6 +450,7 @@ export type NotificationPreferenceSelectUpdateManyAndReturn<ExtArgs extends runt
   whatsapp?: boolean
   email?: boolean
   levelMinimum?: boolean
+  weeklySummary?: boolean
 }, ExtArgs["result"]["notificationPreference"]>
 
 export type NotificationPreferenceSelectScalar = {
@@ -436,9 +461,10 @@ export type NotificationPreferenceSelectScalar = {
   whatsapp?: boolean
   email?: boolean
   levelMinimum?: boolean
+  weeklySummary?: boolean
 }
 
-export type NotificationPreferenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "idUser" | "dashboard" | "push" | "whatsapp" | "email" | "levelMinimum", ExtArgs["result"]["notificationPreference"]>
+export type NotificationPreferenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "idUser" | "dashboard" | "push" | "whatsapp" | "email" | "levelMinimum" | "weeklySummary", ExtArgs["result"]["notificationPreference"]>
 
 export type $NotificationPreferencePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "NotificationPreference"
@@ -451,6 +477,7 @@ export type $NotificationPreferencePayload<ExtArgs extends runtime.Types.Extensi
     whatsapp: boolean
     email: boolean
     levelMinimum: string
+    weeklySummary: boolean
   }, ExtArgs["result"]["notificationPreference"]>
   composites: {}
 }
@@ -881,6 +908,7 @@ export interface NotificationPreferenceFieldRefs {
   readonly whatsapp: Prisma.FieldRef<"NotificationPreference", 'Boolean'>
   readonly email: Prisma.FieldRef<"NotificationPreference", 'Boolean'>
   readonly levelMinimum: Prisma.FieldRef<"NotificationPreference", 'String'>
+  readonly weeklySummary: Prisma.FieldRef<"NotificationPreference", 'Boolean'>
 }
     
 

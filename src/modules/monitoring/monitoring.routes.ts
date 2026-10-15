@@ -1,7 +1,10 @@
+import { randomBytes } from "crypto";
 import { Router, Response } from "express";
 import { z } from "zod";
 import prisma from "../../lib/prisma";
+import { Prisma } from "../../generated/prisma/client";
 import { authenticate, AuthRequest } from "../../common/middleware/auth.middleware";
+import { hashDeviceKey } from "../ingest/ingest.routes";
 
 /**
  * Route monitoring: lansia, perangkat, notifikasi, profil (/me).
@@ -87,6 +90,15 @@ function sleepHours(value: unknown): number {
     }
   }
   return 0;
+}
+
+/** Kalimat penjelasan untuk pengguna awam (judul alert sudah menyebut jenisnya, jadi tidak diulang). */
+function describeAlert(a: { jenisAnomali: string }) {
+  const j = a.jenisAnomali;
+  if (j.startsWith("Jatuh")) return "Pola gerakan menunjukkan kemungkinan jatuh. Mohon segera pastikan kondisi lansia.";
+  if (j.startsWith("Anomali")) return "Tanda vital menyimpang dari kebiasaan. Mohon periksa kondisi lansia.";
+  if (j.startsWith("Detak jantung")) return "Detak jantung di luar batas aman pada beberapa pembacaan berturut-turut.";
+  return j;
 }
 
 function fail(res: Response, error: unknown, fallback: string) {
@@ -197,7 +209,11 @@ router.get("/elders/:id/summary", async (req: AuthRequest, res) => {
 
     const [vital, vitalWithSleep, latestRisk, latestAlert, activities] = await Promise.all([
       prisma.vitalSign.findFirst({ where: { idWearable: { in: wearableIds } }, orderBy: { timestamp: "desc" } }),
-      prisma.vitalSign.findMany({ where: { idWearable: { in: wearableIds } }, orderBy: { timestamp: "desc" }, take: 20 }),
+      prisma.vitalSign.findMany({
+        where: { idWearable: { in: wearableIds }, polaTidur: { not: Prisma.DbNull } },
+        orderBy: { timestamp: "desc" },
+        take: 1,
+      }),
       prisma.riskPrediction.findFirst({ where: { idLansia: elder.id }, orderBy: { waktuPrediksi: "desc" } }),
       prisma.alert.findFirst({
         where: { idLansia: elder.id, status: { not: "selesai" } },
@@ -223,7 +239,7 @@ router.get("/elders/:id/summary", async (req: AuthRequest, res) => {
     const activityHistory = [...counts.values()].map((c) => ({ day: c.label, value: Math.round((c.n / maxN) * 100) }));
     const today = activityHistory[activityHistory.length - 1]?.value ?? 0;
 
-    const sleepRecord = vitalWithSleep.find((v) => v.polaTidur !== null);
+    const sleepRecord = vitalWithSleep[0];
     const risk = latestRisk ? levelLabel(latestRisk.levelRisiko) : latestAlert ? levelLabel(latestAlert.tingkatKeparahan) : "Rendah";
 
     return res.json({
@@ -236,9 +252,10 @@ router.get("/elders/:id/summary", async (req: AuthRequest, res) => {
       alert: latestAlert
         ? {
             id: String(latestAlert.id),
+            fallId: latestAlert.idJatuh ? String(latestAlert.idJatuh) : undefined,
             status: latestAlert.status,
             type: latestAlert.jenisAnomali,
-            description: latestAlert.jenisAnomali,
+            description: describeAlert(latestAlert),
             detected: `${fmtDate(latestAlert.waktuDeteksi)} ${fmtTime(latestAlert.waktuDeteksi)} WIB`,
             level: levelLabel(latestAlert.tingkatKeparahan),
           }
@@ -264,7 +281,7 @@ router.get("/elders/:id/history", async (req: AuthRequest, res) => {
         date: fmtDate(a.waktuDeteksi),
         time: fmtTime(a.waktuDeteksi),
         type: a.jenisAnomali,
-        description: a.jenisAnomali,
+        description: describeAlert(a),
         level: levelLabel(a.tingkatKeparahan),
       })),
     });
@@ -291,11 +308,6 @@ router.get("/elders/:id/vitals", async (req: AuthRequest, res) => {
   } catch (e) {
     return fail(res, e, "Gagal mengambil data vital");
   }
-});
-
-// Realtime (SSE) belum diimplementasi. 204 membuat EventSource berhenti mencoba menyambung ulang.
-router.get("/elders/:id/stream", (_req, res) => {
-  res.status(204).end();
 });
 
 // ---------- perangkat ----------
@@ -333,7 +345,7 @@ function cameraDto(c: { id: number; idLansia: number; namaKamera: string; lokasi
     type: "Kamera CCTV",
     kind: "Kamera CCTV",
     name: c.namaKamera,
-    status: c.status === "aktif" ? "Terhubung" : "Terputus",
+    status: c.status === "aktif" && c.lastSeen && Date.now() - c.lastSeen.getTime() < RECENT_MS ? "Terhubung" : "Terputus",
     battery: null,
     lastSeen: c.lastSeen?.toISOString() ?? null,
     elderId: String(c.idLansia),
@@ -372,8 +384,12 @@ router.post("/devices/wearables", async (req: AuthRequest, res) => {
     const body = deviceBody.parse(req.body);
     const elder = await findElder(req, body.elderId);
     if (!elder) return res.status(404).json({ success: false, message: "Lansia tidak ditemukan" });
-    const w = await prisma.wearable.create({ data: { idLansia: elder.id, tipePerangkat: body.deviceId.slice(0, 50) } });
-    return res.status(201).json({ device: wearableDto(w, elder.nama) });
+    // Device key acak: ditampilkan SEKALI, di database hanya disimpan hash-nya.
+    const deviceKey = `ecw_${randomBytes(24).toString("hex")}`;
+    const w = await prisma.wearable.create({
+      data: { idLansia: elder.id, tipePerangkat: body.deviceId.slice(0, 50), deviceKeyHash: hashDeviceKey(deviceKey) },
+    });
+    return res.status(201).json({ device: wearableDto(w, elder.nama), deviceKey });
   } catch (e) {
     return fail(res, e, "Gagal mendaftarkan wearable");
   }
@@ -384,12 +400,38 @@ router.post("/devices/cameras", async (req: AuthRequest, res) => {
     const body = deviceBody.parse(req.body);
     const elder = await findElder(req, body.elderId);
     if (!elder) return res.status(404).json({ success: false, message: "Lansia tidak ditemukan" });
+    const deviceKey = `ecc_${randomBytes(24).toString("hex")}`;
     const c = await prisma.camera.create({
-      data: { idLansia: elder.id, namaKamera: body.deviceId.slice(0, 100), lokasi: "Belum diatur" },
+      data: { idLansia: elder.id, namaKamera: body.deviceId.slice(0, 100), lokasi: "Belum diatur", deviceKeyHash: hashDeviceKey(deviceKey) },
     });
-    return res.status(201).json({ device: cameraDto(c, elder.nama) });
+    return res.status(201).json({ device: cameraDto(c, elder.nama), deviceKey });
   } catch (e) {
     return fail(res, e, "Gagal mendaftarkan kamera");
+  }
+});
+
+// Buat ulang device key (mis. key hilang atau wearable lama yang belum punya key).
+router.post("/devices/:id/rotate-key", async (req: AuthRequest, res) => {
+  try {
+    const parsed = parseDeviceId(String(req.params.id));
+    if (!parsed) return res.status(400).json({ success: false, message: "ID perangkat tidak valid" });
+    if (req.user!.role === "tenaga_medis") return res.status(403).json({ success: false, message: "Tidak diizinkan" });
+    if (parsed.kind === "w") {
+      const w = await prisma.wearable.findUnique({ where: { id: parsed.id } });
+      const elder = w ? await findElder(req, w.idLansia) : null;
+      if (!w || !elder) return res.status(404).json({ success: false, message: "Perangkat tidak ditemukan" });
+      const deviceKey = `ecw_${randomBytes(24).toString("hex")}`;
+      await prisma.wearable.update({ where: { id: w.id }, data: { deviceKeyHash: hashDeviceKey(deviceKey) } });
+      return res.json({ deviceKey });
+    }
+    const c = await prisma.camera.findUnique({ where: { id: parsed.id } });
+    const elder = c ? await findElder(req, c.idLansia) : null;
+    if (!c || !elder) return res.status(404).json({ success: false, message: "Perangkat tidak ditemukan" });
+    const deviceKey = `ecc_${randomBytes(24).toString("hex")}`;
+    await prisma.camera.update({ where: { id: c.id }, data: { deviceKeyHash: hashDeviceKey(deviceKey) } });
+    return res.json({ deviceKey });
+  } catch (e) {
+    return fail(res, e, "Gagal membuat device key");
   }
 });
 

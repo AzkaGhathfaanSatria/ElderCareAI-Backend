@@ -30,12 +30,22 @@ export type WearableDataAvgAggregateOutputType = {
   id: number | null
   idWearable: number | null
   detakJantung: number | null
+  oxygenLevel: number | null
+  temperature: number | null
+  accelerationMagnitude: number | null
+  gyroMagnitude: number | null
+  heartRateVariability: number | null
 }
 
 export type WearableDataSumAggregateOutputType = {
   id: bigint | null
   idWearable: number | null
   detakJantung: number | null
+  oxygenLevel: number | null
+  temperature: number | null
+  accelerationMagnitude: number | null
+  gyroMagnitude: number | null
+  heartRateVariability: number | null
 }
 
 export type WearableDataMinAggregateOutputType = {
@@ -43,6 +53,11 @@ export type WearableDataMinAggregateOutputType = {
   idWearable: number | null
   detakJantung: number | null
   timestamp: Date | null
+  oxygenLevel: number | null
+  temperature: number | null
+  accelerationMagnitude: number | null
+  gyroMagnitude: number | null
+  heartRateVariability: number | null
 }
 
 export type WearableDataMaxAggregateOutputType = {
@@ -50,6 +65,11 @@ export type WearableDataMaxAggregateOutputType = {
   idWearable: number | null
   detakJantung: number | null
   timestamp: Date | null
+  oxygenLevel: number | null
+  temperature: number | null
+  accelerationMagnitude: number | null
+  gyroMagnitude: number | null
+  heartRateVariability: number | null
 }
 
 export type WearableDataCountAggregateOutputType = {
@@ -58,6 +78,11 @@ export type WearableDataCountAggregateOutputType = {
   detakJantung: number
   polaTidur: number
   timestamp: number
+  oxygenLevel: number
+  temperature: number
+  accelerationMagnitude: number
+  gyroMagnitude: number
+  heartRateVariability: number
   _all: number
 }
 
@@ -66,12 +91,22 @@ export type WearableDataAvgAggregateInputType = {
   id?: true
   idWearable?: true
   detakJantung?: true
+  oxygenLevel?: true
+  temperature?: true
+  accelerationMagnitude?: true
+  gyroMagnitude?: true
+  heartRateVariability?: true
 }
 
 export type WearableDataSumAggregateInputType = {
   id?: true
   idWearable?: true
   detakJantung?: true
+  oxygenLevel?: true
+  temperature?: true
+  accelerationMagnitude?: true
+  gyroMagnitude?: true
+  heartRateVariability?: true
 }
 
 export type WearableDataMinAggregateInputType = {
@@ -79,6 +114,11 @@ export type WearableDataMinAggregateInputType = {
   idWearable?: true
   detakJantung?: true
   timestamp?: true
+  oxygenLevel?: true
+  temperature?: true
+  accelerationMagnitude?: true
+  gyroMagnitude?: true
+  heartRateVariability?: true
 }
 
 export type WearableDataMaxAggregateInputType = {
@@ -86,6 +126,11 @@ export type WearableDataMaxAggregateInputType = {
   idWearable?: true
   detakJantung?: true
   timestamp?: true
+  oxygenLevel?: true
+  temperature?: true
+  accelerationMagnitude?: true
+  gyroMagnitude?: true
+  heartRateVariability?: true
 }
 
 export type WearableDataCountAggregateInputType = {
@@ -94,6 +139,11 @@ export type WearableDataCountAggregateInputType = {
   detakJantung?: true
   polaTidur?: true
   timestamp?: true
+  oxygenLevel?: true
+  temperature?: true
+  accelerationMagnitude?: true
+  gyroMagnitude?: true
+  heartRateVariability?: true
   _all?: true
 }
 
@@ -189,6 +239,11 @@ export type WearableDataGroupByOutputType = {
   detakJantung: number | null
   polaTidur: runtime.JsonValue | null
   timestamp: Date
+  oxygenLevel: number | null
+  temperature: number | null
+  accelerationMagnitude: number | null
+  gyroMagnitude: number | null
+  heartRateVariability: number | null
   _count: WearableDataCountAggregateOutputType | null
   _avg: WearableDataAvgAggregateOutputType | null
   _sum: WearableDataSumAggregateOutputType | null
@@ -220,6 +275,11 @@ export type WearableDataWhereInput = {
   detakJantung?: Prisma.IntNullableFilter<"WearableData"> | number | null
   polaTidur?: Prisma.JsonNullableFilter<"WearableData">
   timestamp?: Prisma.DateTimeFilter<"WearableData"> | Date | string
+  oxygenLevel?: Prisma.FloatNullableFilter<"WearableData"> | number | null
+  temperature?: Prisma.FloatNullableFilter<"WearableData"> | number | null
+  accelerationMagnitude?: Prisma.FloatNullableFilter<"WearableData"> | number | null
+  gyroMagnitude?: Prisma.FloatNullableFilter<"WearableData"> | number | null
+  heartRateVariability?: Prisma.FloatNullableFilter<"WearableData"> | number | null
   wearable?: Prisma.XOR<Prisma.WearableScalarRelationFilter, Prisma.WearableWhereInput>
 }
 
@@ -229,6 +289,11 @@ export type WearableDataOrderByWithRelationInput = {
   detakJantung?: Prisma.SortOrderInput | Prisma.SortOrder
   polaTidur?: Prisma.SortOrderInput | Prisma.SortOrder
   timestamp?: Prisma.SortOrder
+  oxygenLevel?: Prisma.SortOrderInput | Prisma.SortOrder
+  temperature?: Prisma.SortOrderInput | Prisma.SortOrder
+  accelerationMagnitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  gyroMagnitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  heartRateVariability?: Prisma.SortOrderInput | Prisma.SortOrder
   wearable?: Prisma.WearableOrderByWithRelationInput
 }
 
@@ -242,6 +307,11 @@ export type WearableDataWhereUniqueInput = Prisma.AtLeast<{
   detakJantung?: Prisma.IntNullableFilter<"WearableData"> | number | null
   polaTidur?: Prisma.JsonNullableFilter<"WearableData">
   timestamp?: Prisma.DateTimeFilter<"WearableData"> | Date | string
+  oxygenLevel?: Prisma.FloatNullableFilter<"WearableData"> | number | null
+  temperature?: Prisma.FloatNullableFilter<"WearableData"> | number | null
+  accelerationMagnitude?: Prisma.FloatNullableFilter<"WearableData"> | number | null
+  gyroMagnitude?: Prisma.FloatNullableFilter<"WearableData"> | number | null
+  heartRateVariability?: Prisma.FloatNullableFilter<"WearableData"> | number | null
   wearable?: Prisma.XOR<Prisma.WearableScalarRelationFilter, Prisma.WearableWhereInput>
 }, "id" | "idWearable_timestamp">
 
@@ -251,6 +321,11 @@ export type WearableDataOrderByWithAggregationInput = {
   detakJantung?: Prisma.SortOrderInput | Prisma.SortOrder
   polaTidur?: Prisma.SortOrderInput | Prisma.SortOrder
   timestamp?: Prisma.SortOrder
+  oxygenLevel?: Prisma.SortOrderInput | Prisma.SortOrder
+  temperature?: Prisma.SortOrderInput | Prisma.SortOrder
+  accelerationMagnitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  gyroMagnitude?: Prisma.SortOrderInput | Prisma.SortOrder
+  heartRateVariability?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.WearableDataCountOrderByAggregateInput
   _avg?: Prisma.WearableDataAvgOrderByAggregateInput
   _max?: Prisma.WearableDataMaxOrderByAggregateInput
@@ -267,6 +342,11 @@ export type WearableDataScalarWhereWithAggregatesInput = {
   detakJantung?: Prisma.IntNullableWithAggregatesFilter<"WearableData"> | number | null
   polaTidur?: Prisma.JsonNullableWithAggregatesFilter<"WearableData">
   timestamp?: Prisma.DateTimeWithAggregatesFilter<"WearableData"> | Date | string
+  oxygenLevel?: Prisma.FloatNullableWithAggregatesFilter<"WearableData"> | number | null
+  temperature?: Prisma.FloatNullableWithAggregatesFilter<"WearableData"> | number | null
+  accelerationMagnitude?: Prisma.FloatNullableWithAggregatesFilter<"WearableData"> | number | null
+  gyroMagnitude?: Prisma.FloatNullableWithAggregatesFilter<"WearableData"> | number | null
+  heartRateVariability?: Prisma.FloatNullableWithAggregatesFilter<"WearableData"> | number | null
 }
 
 export type WearableDataCreateInput = {
@@ -274,6 +354,11 @@ export type WearableDataCreateInput = {
   detakJantung?: number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Date | string
+  oxygenLevel?: number | null
+  temperature?: number | null
+  accelerationMagnitude?: number | null
+  gyroMagnitude?: number | null
+  heartRateVariability?: number | null
   wearable: Prisma.WearableCreateNestedOneWithoutDataWearableInput
 }
 
@@ -283,6 +368,11 @@ export type WearableDataUncheckedCreateInput = {
   detakJantung?: number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Date | string
+  oxygenLevel?: number | null
+  temperature?: number | null
+  accelerationMagnitude?: number | null
+  gyroMagnitude?: number | null
+  heartRateVariability?: number | null
 }
 
 export type WearableDataUpdateInput = {
@@ -290,6 +380,11 @@ export type WearableDataUpdateInput = {
   detakJantung?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oxygenLevel?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  accelerationMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  gyroMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  heartRateVariability?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   wearable?: Prisma.WearableUpdateOneRequiredWithoutDataWearableNestedInput
 }
 
@@ -299,6 +394,11 @@ export type WearableDataUncheckedUpdateInput = {
   detakJantung?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oxygenLevel?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  accelerationMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  gyroMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  heartRateVariability?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type WearableDataCreateManyInput = {
@@ -307,6 +407,11 @@ export type WearableDataCreateManyInput = {
   detakJantung?: number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Date | string
+  oxygenLevel?: number | null
+  temperature?: number | null
+  accelerationMagnitude?: number | null
+  gyroMagnitude?: number | null
+  heartRateVariability?: number | null
 }
 
 export type WearableDataUpdateManyMutationInput = {
@@ -314,6 +419,11 @@ export type WearableDataUpdateManyMutationInput = {
   detakJantung?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oxygenLevel?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  accelerationMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  gyroMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  heartRateVariability?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type WearableDataUncheckedUpdateManyInput = {
@@ -322,6 +432,11 @@ export type WearableDataUncheckedUpdateManyInput = {
   detakJantung?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oxygenLevel?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  accelerationMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  gyroMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  heartRateVariability?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type WearableDataListRelationFilter = {
@@ -345,12 +460,22 @@ export type WearableDataCountOrderByAggregateInput = {
   detakJantung?: Prisma.SortOrder
   polaTidur?: Prisma.SortOrder
   timestamp?: Prisma.SortOrder
+  oxygenLevel?: Prisma.SortOrder
+  temperature?: Prisma.SortOrder
+  accelerationMagnitude?: Prisma.SortOrder
+  gyroMagnitude?: Prisma.SortOrder
+  heartRateVariability?: Prisma.SortOrder
 }
 
 export type WearableDataAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   idWearable?: Prisma.SortOrder
   detakJantung?: Prisma.SortOrder
+  oxygenLevel?: Prisma.SortOrder
+  temperature?: Prisma.SortOrder
+  accelerationMagnitude?: Prisma.SortOrder
+  gyroMagnitude?: Prisma.SortOrder
+  heartRateVariability?: Prisma.SortOrder
 }
 
 export type WearableDataMaxOrderByAggregateInput = {
@@ -358,6 +483,11 @@ export type WearableDataMaxOrderByAggregateInput = {
   idWearable?: Prisma.SortOrder
   detakJantung?: Prisma.SortOrder
   timestamp?: Prisma.SortOrder
+  oxygenLevel?: Prisma.SortOrder
+  temperature?: Prisma.SortOrder
+  accelerationMagnitude?: Prisma.SortOrder
+  gyroMagnitude?: Prisma.SortOrder
+  heartRateVariability?: Prisma.SortOrder
 }
 
 export type WearableDataMinOrderByAggregateInput = {
@@ -365,12 +495,22 @@ export type WearableDataMinOrderByAggregateInput = {
   idWearable?: Prisma.SortOrder
   detakJantung?: Prisma.SortOrder
   timestamp?: Prisma.SortOrder
+  oxygenLevel?: Prisma.SortOrder
+  temperature?: Prisma.SortOrder
+  accelerationMagnitude?: Prisma.SortOrder
+  gyroMagnitude?: Prisma.SortOrder
+  heartRateVariability?: Prisma.SortOrder
 }
 
 export type WearableDataSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   idWearable?: Prisma.SortOrder
   detakJantung?: Prisma.SortOrder
+  oxygenLevel?: Prisma.SortOrder
+  temperature?: Prisma.SortOrder
+  accelerationMagnitude?: Prisma.SortOrder
+  gyroMagnitude?: Prisma.SortOrder
+  heartRateVariability?: Prisma.SortOrder
 }
 
 export type WearableDataCreateNestedManyWithoutWearableInput = {
@@ -415,11 +555,24 @@ export type WearableDataUncheckedUpdateManyWithoutWearableNestedInput = {
   deleteMany?: Prisma.WearableDataScalarWhereInput | Prisma.WearableDataScalarWhereInput[]
 }
 
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type WearableDataCreateWithoutWearableInput = {
   id?: bigint | number
   detakJantung?: number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Date | string
+  oxygenLevel?: number | null
+  temperature?: number | null
+  accelerationMagnitude?: number | null
+  gyroMagnitude?: number | null
+  heartRateVariability?: number | null
 }
 
 export type WearableDataUncheckedCreateWithoutWearableInput = {
@@ -427,6 +580,11 @@ export type WearableDataUncheckedCreateWithoutWearableInput = {
   detakJantung?: number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Date | string
+  oxygenLevel?: number | null
+  temperature?: number | null
+  accelerationMagnitude?: number | null
+  gyroMagnitude?: number | null
+  heartRateVariability?: number | null
 }
 
 export type WearableDataCreateOrConnectWithoutWearableInput = {
@@ -464,6 +622,11 @@ export type WearableDataScalarWhereInput = {
   detakJantung?: Prisma.IntNullableFilter<"WearableData"> | number | null
   polaTidur?: Prisma.JsonNullableFilter<"WearableData">
   timestamp?: Prisma.DateTimeFilter<"WearableData"> | Date | string
+  oxygenLevel?: Prisma.FloatNullableFilter<"WearableData"> | number | null
+  temperature?: Prisma.FloatNullableFilter<"WearableData"> | number | null
+  accelerationMagnitude?: Prisma.FloatNullableFilter<"WearableData"> | number | null
+  gyroMagnitude?: Prisma.FloatNullableFilter<"WearableData"> | number | null
+  heartRateVariability?: Prisma.FloatNullableFilter<"WearableData"> | number | null
 }
 
 export type WearableDataCreateManyWearableInput = {
@@ -471,6 +634,11 @@ export type WearableDataCreateManyWearableInput = {
   detakJantung?: number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Date | string
+  oxygenLevel?: number | null
+  temperature?: number | null
+  accelerationMagnitude?: number | null
+  gyroMagnitude?: number | null
+  heartRateVariability?: number | null
 }
 
 export type WearableDataUpdateWithoutWearableInput = {
@@ -478,6 +646,11 @@ export type WearableDataUpdateWithoutWearableInput = {
   detakJantung?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oxygenLevel?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  accelerationMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  gyroMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  heartRateVariability?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type WearableDataUncheckedUpdateWithoutWearableInput = {
@@ -485,6 +658,11 @@ export type WearableDataUncheckedUpdateWithoutWearableInput = {
   detakJantung?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oxygenLevel?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  accelerationMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  gyroMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  heartRateVariability?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 export type WearableDataUncheckedUpdateManyWithoutWearableInput = {
@@ -492,6 +670,11 @@ export type WearableDataUncheckedUpdateManyWithoutWearableInput = {
   detakJantung?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   polaTidur?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   timestamp?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  oxygenLevel?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  temperature?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  accelerationMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  gyroMagnitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  heartRateVariability?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
 }
 
 
@@ -502,6 +685,11 @@ export type WearableDataSelect<ExtArgs extends runtime.Types.Extensions.Internal
   detakJantung?: boolean
   polaTidur?: boolean
   timestamp?: boolean
+  oxygenLevel?: boolean
+  temperature?: boolean
+  accelerationMagnitude?: boolean
+  gyroMagnitude?: boolean
+  heartRateVariability?: boolean
   wearable?: boolean | Prisma.WearableDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["wearableData"]>
 
@@ -511,6 +699,11 @@ export type WearableDataSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   detakJantung?: boolean
   polaTidur?: boolean
   timestamp?: boolean
+  oxygenLevel?: boolean
+  temperature?: boolean
+  accelerationMagnitude?: boolean
+  gyroMagnitude?: boolean
+  heartRateVariability?: boolean
   wearable?: boolean | Prisma.WearableDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["wearableData"]>
 
@@ -520,6 +713,11 @@ export type WearableDataSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   detakJantung?: boolean
   polaTidur?: boolean
   timestamp?: boolean
+  oxygenLevel?: boolean
+  temperature?: boolean
+  accelerationMagnitude?: boolean
+  gyroMagnitude?: boolean
+  heartRateVariability?: boolean
   wearable?: boolean | Prisma.WearableDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["wearableData"]>
 
@@ -529,9 +727,14 @@ export type WearableDataSelectScalar = {
   detakJantung?: boolean
   polaTidur?: boolean
   timestamp?: boolean
+  oxygenLevel?: boolean
+  temperature?: boolean
+  accelerationMagnitude?: boolean
+  gyroMagnitude?: boolean
+  heartRateVariability?: boolean
 }
 
-export type WearableDataOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "idWearable" | "detakJantung" | "polaTidur" | "timestamp", ExtArgs["result"]["wearableData"]>
+export type WearableDataOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "idWearable" | "detakJantung" | "polaTidur" | "timestamp" | "oxygenLevel" | "temperature" | "accelerationMagnitude" | "gyroMagnitude" | "heartRateVariability", ExtArgs["result"]["wearableData"]>
 export type WearableDataInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   wearable?: boolean | Prisma.WearableDefaultArgs<ExtArgs>
 }
@@ -553,6 +756,11 @@ export type $WearableDataPayload<ExtArgs extends runtime.Types.Extensions.Intern
     detakJantung: number | null
     polaTidur: runtime.JsonValue | null
     timestamp: Date
+    oxygenLevel: number | null
+    temperature: number | null
+    accelerationMagnitude: number | null
+    gyroMagnitude: number | null
+    heartRateVariability: number | null
   }, ExtArgs["result"]["wearableData"]>
   composites: {}
 }
@@ -982,6 +1190,11 @@ export interface WearableDataFieldRefs {
   readonly detakJantung: Prisma.FieldRef<"WearableData", 'Int'>
   readonly polaTidur: Prisma.FieldRef<"WearableData", 'Json'>
   readonly timestamp: Prisma.FieldRef<"WearableData", 'DateTime'>
+  readonly oxygenLevel: Prisma.FieldRef<"WearableData", 'Float'>
+  readonly temperature: Prisma.FieldRef<"WearableData", 'Float'>
+  readonly accelerationMagnitude: Prisma.FieldRef<"WearableData", 'Float'>
+  readonly gyroMagnitude: Prisma.FieldRef<"WearableData", 'Float'>
+  readonly heartRateVariability: Prisma.FieldRef<"WearableData", 'Float'>
 }
     
 

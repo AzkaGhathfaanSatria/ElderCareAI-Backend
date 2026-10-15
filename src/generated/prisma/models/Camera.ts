@@ -43,6 +43,7 @@ export type CameraMinAggregateOutputType = {
   lokasi: string | null
   status: $Enums.DeviceStatus | null
   lastSeen: Date | null
+  deviceKeyHash: string | null
 }
 
 export type CameraMaxAggregateOutputType = {
@@ -52,6 +53,7 @@ export type CameraMaxAggregateOutputType = {
   lokasi: string | null
   status: $Enums.DeviceStatus | null
   lastSeen: Date | null
+  deviceKeyHash: string | null
 }
 
 export type CameraCountAggregateOutputType = {
@@ -61,6 +63,7 @@ export type CameraCountAggregateOutputType = {
   lokasi: number
   status: number
   lastSeen: number
+  deviceKeyHash: number
   _all: number
 }
 
@@ -82,6 +85,7 @@ export type CameraMinAggregateInputType = {
   lokasi?: true
   status?: true
   lastSeen?: true
+  deviceKeyHash?: true
 }
 
 export type CameraMaxAggregateInputType = {
@@ -91,6 +95,7 @@ export type CameraMaxAggregateInputType = {
   lokasi?: true
   status?: true
   lastSeen?: true
+  deviceKeyHash?: true
 }
 
 export type CameraCountAggregateInputType = {
@@ -100,6 +105,7 @@ export type CameraCountAggregateInputType = {
   lokasi?: true
   status?: true
   lastSeen?: true
+  deviceKeyHash?: true
   _all?: true
 }
 
@@ -196,6 +202,7 @@ export type CameraGroupByOutputType = {
   lokasi: string
   status: $Enums.DeviceStatus
   lastSeen: Date | null
+  deviceKeyHash: string | null
   _count: CameraCountAggregateOutputType | null
   _avg: CameraAvgAggregateOutputType | null
   _sum: CameraSumAggregateOutputType | null
@@ -228,6 +235,7 @@ export type CameraWhereInput = {
   lokasi?: Prisma.StringFilter<"Camera"> | string
   status?: Prisma.EnumDeviceStatusFilter<"Camera"> | $Enums.DeviceStatus
   lastSeen?: Prisma.DateTimeNullableFilter<"Camera"> | Date | string | null
+  deviceKeyHash?: Prisma.StringNullableFilter<"Camera"> | string | null
   lansia?: Prisma.XOR<Prisma.LansiaScalarRelationFilter, Prisma.LansiaWhereInput>
   detections?: Prisma.YoloDetectionListRelationFilter
 }
@@ -239,6 +247,7 @@ export type CameraOrderByWithRelationInput = {
   lokasi?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastSeen?: Prisma.SortOrderInput | Prisma.SortOrder
+  deviceKeyHash?: Prisma.SortOrderInput | Prisma.SortOrder
   lansia?: Prisma.LansiaOrderByWithRelationInput
   detections?: Prisma.YoloDetectionOrderByRelationAggregateInput
 }
@@ -253,6 +262,7 @@ export type CameraWhereUniqueInput = Prisma.AtLeast<{
   lokasi?: Prisma.StringFilter<"Camera"> | string
   status?: Prisma.EnumDeviceStatusFilter<"Camera"> | $Enums.DeviceStatus
   lastSeen?: Prisma.DateTimeNullableFilter<"Camera"> | Date | string | null
+  deviceKeyHash?: Prisma.StringNullableFilter<"Camera"> | string | null
   lansia?: Prisma.XOR<Prisma.LansiaScalarRelationFilter, Prisma.LansiaWhereInput>
   detections?: Prisma.YoloDetectionListRelationFilter
 }, "id">
@@ -264,6 +274,7 @@ export type CameraOrderByWithAggregationInput = {
   lokasi?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastSeen?: Prisma.SortOrderInput | Prisma.SortOrder
+  deviceKeyHash?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.CameraCountOrderByAggregateInput
   _avg?: Prisma.CameraAvgOrderByAggregateInput
   _max?: Prisma.CameraMaxOrderByAggregateInput
@@ -281,6 +292,7 @@ export type CameraScalarWhereWithAggregatesInput = {
   lokasi?: Prisma.StringWithAggregatesFilter<"Camera"> | string
   status?: Prisma.EnumDeviceStatusWithAggregatesFilter<"Camera"> | $Enums.DeviceStatus
   lastSeen?: Prisma.DateTimeNullableWithAggregatesFilter<"Camera"> | Date | string | null
+  deviceKeyHash?: Prisma.StringNullableWithAggregatesFilter<"Camera"> | string | null
 }
 
 export type CameraCreateInput = {
@@ -288,6 +300,7 @@ export type CameraCreateInput = {
   lokasi: string
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
+  deviceKeyHash?: string | null
   lansia: Prisma.LansiaCreateNestedOneWithoutKameraInput
   detections?: Prisma.YoloDetectionCreateNestedManyWithoutKameraInput
 }
@@ -299,6 +312,7 @@ export type CameraUncheckedCreateInput = {
   lokasi: string
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
+  deviceKeyHash?: string | null
   detections?: Prisma.YoloDetectionUncheckedCreateNestedManyWithoutKameraInput
 }
 
@@ -307,6 +321,7 @@ export type CameraUpdateInput = {
   lokasi?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lansia?: Prisma.LansiaUpdateOneRequiredWithoutKameraNestedInput
   detections?: Prisma.YoloDetectionUpdateManyWithoutKameraNestedInput
 }
@@ -318,6 +333,7 @@ export type CameraUncheckedUpdateInput = {
   lokasi?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   detections?: Prisma.YoloDetectionUncheckedUpdateManyWithoutKameraNestedInput
 }
 
@@ -328,6 +344,7 @@ export type CameraCreateManyInput = {
   lokasi: string
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
+  deviceKeyHash?: string | null
 }
 
 export type CameraUpdateManyMutationInput = {
@@ -335,6 +352,7 @@ export type CameraUpdateManyMutationInput = {
   lokasi?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type CameraUncheckedUpdateManyInput = {
@@ -344,6 +362,7 @@ export type CameraUncheckedUpdateManyInput = {
   lokasi?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type CameraListRelationFilter = {
@@ -363,6 +382,7 @@ export type CameraCountOrderByAggregateInput = {
   lokasi?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastSeen?: Prisma.SortOrder
+  deviceKeyHash?: Prisma.SortOrder
 }
 
 export type CameraAvgOrderByAggregateInput = {
@@ -377,6 +397,7 @@ export type CameraMaxOrderByAggregateInput = {
   lokasi?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastSeen?: Prisma.SortOrder
+  deviceKeyHash?: Prisma.SortOrder
 }
 
 export type CameraMinOrderByAggregateInput = {
@@ -386,6 +407,7 @@ export type CameraMinOrderByAggregateInput = {
   lokasi?: Prisma.SortOrder
   status?: Prisma.SortOrder
   lastSeen?: Prisma.SortOrder
+  deviceKeyHash?: Prisma.SortOrder
 }
 
 export type CameraSumOrderByAggregateInput = {
@@ -461,6 +483,7 @@ export type CameraCreateWithoutLansiaInput = {
   lokasi: string
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
+  deviceKeyHash?: string | null
   detections?: Prisma.YoloDetectionCreateNestedManyWithoutKameraInput
 }
 
@@ -470,6 +493,7 @@ export type CameraUncheckedCreateWithoutLansiaInput = {
   lokasi: string
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
+  deviceKeyHash?: string | null
   detections?: Prisma.YoloDetectionUncheckedCreateNestedManyWithoutKameraInput
 }
 
@@ -509,6 +533,7 @@ export type CameraScalarWhereInput = {
   lokasi?: Prisma.StringFilter<"Camera"> | string
   status?: Prisma.EnumDeviceStatusFilter<"Camera"> | $Enums.DeviceStatus
   lastSeen?: Prisma.DateTimeNullableFilter<"Camera"> | Date | string | null
+  deviceKeyHash?: Prisma.StringNullableFilter<"Camera"> | string | null
 }
 
 export type CameraCreateWithoutDetectionsInput = {
@@ -516,6 +541,7 @@ export type CameraCreateWithoutDetectionsInput = {
   lokasi: string
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
+  deviceKeyHash?: string | null
   lansia: Prisma.LansiaCreateNestedOneWithoutKameraInput
 }
 
@@ -526,6 +552,7 @@ export type CameraUncheckedCreateWithoutDetectionsInput = {
   lokasi: string
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
+  deviceKeyHash?: string | null
 }
 
 export type CameraCreateOrConnectWithoutDetectionsInput = {
@@ -549,6 +576,7 @@ export type CameraUpdateWithoutDetectionsInput = {
   lokasi?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lansia?: Prisma.LansiaUpdateOneRequiredWithoutKameraNestedInput
 }
 
@@ -559,6 +587,7 @@ export type CameraUncheckedUpdateWithoutDetectionsInput = {
   lokasi?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type CameraCreateManyLansiaInput = {
@@ -567,6 +596,7 @@ export type CameraCreateManyLansiaInput = {
   lokasi: string
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
+  deviceKeyHash?: string | null
 }
 
 export type CameraUpdateWithoutLansiaInput = {
@@ -574,6 +604,7 @@ export type CameraUpdateWithoutLansiaInput = {
   lokasi?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   detections?: Prisma.YoloDetectionUpdateManyWithoutKameraNestedInput
 }
 
@@ -583,6 +614,7 @@ export type CameraUncheckedUpdateWithoutLansiaInput = {
   lokasi?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   detections?: Prisma.YoloDetectionUncheckedUpdateManyWithoutKameraNestedInput
 }
 
@@ -592,6 +624,7 @@ export type CameraUncheckedUpdateManyWithoutLansiaInput = {
   lokasi?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -632,6 +665,7 @@ export type CameraSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   lokasi?: boolean
   status?: boolean
   lastSeen?: boolean
+  deviceKeyHash?: boolean
   lansia?: boolean | Prisma.LansiaDefaultArgs<ExtArgs>
   detections?: boolean | Prisma.Camera$detectionsArgs<ExtArgs>
   _count?: boolean | Prisma.CameraCountOutputTypeDefaultArgs<ExtArgs>
@@ -644,6 +678,7 @@ export type CameraSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   lokasi?: boolean
   status?: boolean
   lastSeen?: boolean
+  deviceKeyHash?: boolean
   lansia?: boolean | Prisma.LansiaDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["camera"]>
 
@@ -654,6 +689,7 @@ export type CameraSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   lokasi?: boolean
   status?: boolean
   lastSeen?: boolean
+  deviceKeyHash?: boolean
   lansia?: boolean | Prisma.LansiaDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["camera"]>
 
@@ -664,9 +700,10 @@ export type CameraSelectScalar = {
   lokasi?: boolean
   status?: boolean
   lastSeen?: boolean
+  deviceKeyHash?: boolean
 }
 
-export type CameraOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "idLansia" | "namaKamera" | "lokasi" | "status" | "lastSeen", ExtArgs["result"]["camera"]>
+export type CameraOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "idLansia" | "namaKamera" | "lokasi" | "status" | "lastSeen" | "deviceKeyHash", ExtArgs["result"]["camera"]>
 export type CameraInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   lansia?: boolean | Prisma.LansiaDefaultArgs<ExtArgs>
   detections?: boolean | Prisma.Camera$detectionsArgs<ExtArgs>
@@ -692,6 +729,7 @@ export type $CameraPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     lokasi: string
     status: $Enums.DeviceStatus
     lastSeen: Date | null
+    deviceKeyHash: string | null
   }, ExtArgs["result"]["camera"]>
   composites: {}
 }
@@ -1123,6 +1161,7 @@ export interface CameraFieldRefs {
   readonly lokasi: Prisma.FieldRef<"Camera", 'String'>
   readonly status: Prisma.FieldRef<"Camera", 'DeviceStatus'>
   readonly lastSeen: Prisma.FieldRef<"Camera", 'DateTime'>
+  readonly deviceKeyHash: Prisma.FieldRef<"Camera", 'String'>
 }
     
 

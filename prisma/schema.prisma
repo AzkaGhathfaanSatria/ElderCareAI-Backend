@@ -55,12 +55,14 @@ model User {
   password      String   @db.VarChar(255)
   role          Role     @default(keluarga)
   noTelepon     String?  @map("no_telepon") @db.VarChar(20)
+  status        String   @default("aktif") @db.VarChar(20)
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   lansia        Lansia[]
   notifikasi    Notification[]
   refreshTokens RefreshToken[]
   auditLogs     AuditLog[]
+  resetTokens   PasswordResetToken[]
 
   @@map("tb_user")
 }
@@ -148,6 +150,13 @@ model WearableData {
   polaTidur    Json?    @map("pola_tidur") @db.JsonB
   timestamp    DateTime @default(now()) @db.Timestamptz(6)
 
+  // Metrik tambahan untuk model AI sensor (kontrak: KONTRAK.md notebook Hari 3)
+  oxygenLevel           Float? @map("oxygen_level")
+  temperature           Float?
+  accelerationMagnitude Float? @map("acceleration_magnitude")
+  gyroMagnitude         Float? @map("gyro_magnitude")
+  heartRateVariability  Float? @map("heart_rate_variability")
+
   wearable Wearable @relation(fields: [idWearable], references: [id])
 
   @@unique([idWearable, timestamp])
@@ -191,6 +200,7 @@ model Camera {
   lokasi     String       @db.VarChar(100)
   status     DeviceStatus @default(aktif)
   lastSeen   DateTime?    @map("last_seen") @db.Timestamptz(6)
+  deviceKeyHash String?   @map("device_key_hash") @db.VarChar(255)
 
   lansia     Lansia        @relation(fields: [idLansia], references: [id])
   detections YoloDetection[]
@@ -292,6 +302,7 @@ model NotificationPreference {
   whatsapp     Boolean  @default(false)
   email        Boolean  @default(false)
   levelMinimum String   @default("sedang") @map("level_minimum") @db.VarChar(20)
+  weeklySummary Boolean  @default(false) @map("weekly_summary")
 
   @@map("tb_preferensi_notifikasi")
 }
@@ -317,6 +328,20 @@ model RefreshToken {
   user User @relation(fields: [idUser], references: [id])
 
   @@map("tb_refresh_token")
+}
+
+model PasswordResetToken {
+  id        BigInt    @id @default(autoincrement()) @map("id_reset_token")
+  idUser    Int       @map("id_user")
+  tokenHash String    @unique @map("token_hash") @db.VarChar(255)
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [idUser], references: [id])
+
+  @@index([idUser, createdAt(sort: Desc)])
+  @@map("tb_reset_password_token")
 }
 
 model AuditLog {

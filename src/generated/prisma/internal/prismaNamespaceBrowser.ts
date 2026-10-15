@@ -69,6 +69,7 @@ export const ModelName = {
   NotificationPreference: 'NotificationPreference',
   PushToken: 'PushToken',
   RefreshToken: 'RefreshToken',
+  PasswordResetToken: 'PasswordResetToken',
   AuditLog: 'AuditLog'
 } as const
 
@@ -95,6 +96,7 @@ export const UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   noTelepon: 'noTelepon',
+  status: 'status',
   createdAt: 'createdAt'
 } as const
 
@@ -163,7 +165,12 @@ export const WearableDataScalarFieldEnum = {
   idWearable: 'idWearable',
   detakJantung: 'detakJantung',
   polaTidur: 'polaTidur',
-  timestamp: 'timestamp'
+  timestamp: 'timestamp',
+  oxygenLevel: 'oxygenLevel',
+  temperature: 'temperature',
+  accelerationMagnitude: 'accelerationMagnitude',
+  gyroMagnitude: 'gyroMagnitude',
+  heartRateVariability: 'heartRateVariability'
 } as const
 
 export type WearableDataScalarFieldEnum = (typeof WearableDataScalarFieldEnum)[keyof typeof WearableDataScalarFieldEnum]
@@ -198,7 +205,8 @@ export const CameraScalarFieldEnum = {
   namaKamera: 'namaKamera',
   lokasi: 'lokasi',
   status: 'status',
-  lastSeen: 'lastSeen'
+  lastSeen: 'lastSeen',
+  deviceKeyHash: 'deviceKeyHash'
 } as const
 
 export type CameraScalarFieldEnum = (typeof CameraScalarFieldEnum)[keyof typeof CameraScalarFieldEnum]
@@ -281,7 +289,8 @@ export const NotificationPreferenceScalarFieldEnum = {
   push: 'push',
   whatsapp: 'whatsapp',
   email: 'email',
-  levelMinimum: 'levelMinimum'
+  levelMinimum: 'levelMinimum',
+  weeklySummary: 'weeklySummary'
 } as const
 
 export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
@@ -308,6 +317,18 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  idUser: 'idUser',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
 export const AuditLogScalarFieldEnum = {

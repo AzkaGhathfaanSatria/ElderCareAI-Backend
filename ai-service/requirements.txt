@@ -1,0 +1,7 @@
+# Layanan AI sensor (wajib). Versi scikit-learn HARUS sama dengan saat training (model_final.pkl dibuat dengan 1.8.0).
+flask>=3.0
+gunicorn>=22.0
+scikit-learn==1.8.0
+pandas>=2.2
+numpy>=2.0
+pillow>=10.0

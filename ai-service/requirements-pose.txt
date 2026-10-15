@@ -1,0 +1,3 @@
+# Tambahan untuk /infer/pose (YOLOv8n-Pose). Berat (PyTorch). Pasang hanya jika kamera dipakai.
+# best.pt dilatih dengan ultralytics 8.4.172.
+ultralytics>=8.4.172
