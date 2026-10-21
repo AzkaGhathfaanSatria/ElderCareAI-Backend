@@ -142,7 +142,9 @@ def main():
             if jpg is None:
                 continue
             if a.preview:
-                cv2.imshow("camera_bridge (q = keluar)", frame)
+                h, w = frame.shape[:2]
+                shown = cv2.resize(frame, (960, int(h * 960 / w))) if w > 960 else frame
+                cv2.imshow("camera_bridge (q = keluar)", shown)
                 if cv2.waitKey(1) & 0xFF == ord("q"):
                     raise KeyboardInterrupt
 

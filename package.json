@@ -8,6 +8,7 @@
     "start": "tsx src/server.ts",
     "simulate": "tsx scripts/simulate-wearable.ts",
     "create-admin": "tsx scripts/create-admin.ts",
+    "seed-demo": "tsx scripts/seed-demo-users.ts",
     "simulate-camera": "tsx scripts/simulate-camera.ts"
   },
   "keywords": [],
