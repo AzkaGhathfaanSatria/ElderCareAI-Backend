@@ -202,6 +202,15 @@ model Camera {
   lastSeen   DateTime?    @map("last_seen") @db.Timestamptz(6)
   deviceKeyHash String?   @map("device_key_hash") @db.VarChar(255)
 
+  // Pengaturan stream RTSP (diisi dari halaman Perangkat). Password disimpan terenkripsi (AES-256-GCM).
+  streamHost    String?   @map("stream_host") @db.VarChar(255)
+  streamPort    Int?      @map("stream_port")
+  streamUser    String?   @map("stream_user") @db.VarChar(100)
+  streamPassEnc String?   @map("stream_pass_enc")
+  streamPath    String?   @map("stream_path") @db.VarChar(255)
+  streamFps     Float     @default(1) @map("stream_fps")
+  streamEnabled Boolean   @default(false) @map("stream_enabled")
+
   lansia     Lansia        @relation(fields: [idLansia], references: [id])
   detections YoloDetection[]
 

@@ -16,10 +16,10 @@
  */
 
 import * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from "../models"
-import { type PrismaClient } from "./class"
+import type * as Prisma from "../models.ts"
+import { type PrismaClient } from "./class.ts"
 
-export type * from '../models'
+export type * from '../models.ts'
 
 export type DMMF = typeof runtime.DMMF
 
@@ -2072,7 +2072,14 @@ export const CameraScalarFieldEnum = {
   lokasi: 'lokasi',
   status: 'status',
   lastSeen: 'lastSeen',
-  deviceKeyHash: 'deviceKeyHash'
+  deviceKeyHash: 'deviceKeyHash',
+  streamHost: 'streamHost',
+  streamPort: 'streamPort',
+  streamUser: 'streamUser',
+  streamPassEnc: 'streamPassEnc',
+  streamPath: 'streamPath',
+  streamFps: 'streamFps',
+  streamEnabled: 'streamEnabled'
 } as const
 
 export type CameraScalarFieldEnum = (typeof CameraScalarFieldEnum)[keyof typeof CameraScalarFieldEnum]

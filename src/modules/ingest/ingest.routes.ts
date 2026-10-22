@@ -1,10 +1,11 @@
-import { createHash } from "crypto";
+import { createHash, timingSafeEqual } from "crypto";
 import express, { NextFunction, Request, Response, Router } from "express";
 import { z } from "zod";
 import prisma from "../../lib/prisma";
 import { publish } from "../../common/events";
 import { evaluateSensor, evaluateWearable, raiseFall } from "../alerts/alert.engine";
 import { inferPose, isFallClass } from "../../integrations/aiClient";
+import { INTERNAL_TOKEN } from "../camera/camera.worker";
 
 export function hashDeviceKey(key: string) {
   return createHash("sha256").update(key).digest("hex");
@@ -149,7 +150,28 @@ interface CameraRequest extends Request {
   camera?: { id: number; idLansia: number };
 }
 
+function isInternalToken(t: string | undefined) {
+  if (!t) return false;
+  const a = Buffer.from(t), b = Buffer.from(INTERNAL_TOKEN);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 async function cameraAuth(req: CameraRequest, res: Response, next: NextFunction) {
+  // Worker bawaan server (dikendalikan dari halaman Perangkat) memakai token internal + id kamera.
+  const internal = req.header("x-internal-token");
+  if (internal !== undefined) {
+    const id = Number(req.header("x-camera-id"));
+    if (!isInternalToken(internal) || !Number.isInteger(id)) return res.status(401).json({ success: false, message: "Token internal tidak valid" });
+    try {
+      const c = await prisma.camera.findUnique({ where: { id }, select: { id: true, idLansia: true } });
+      if (!c) return res.status(401).json({ success: false, message: "Kamera tidak ditemukan" });
+      req.camera = c;
+      return next();
+    } catch (e) {
+      console.error("cameraAuth internal", e);
+      return res.status(500).json({ success: false, message: "Gagal memverifikasi kamera" });
+    }
+  }
   const key = req.header("x-device-key");
   if (!key) return res.status(401).json({ success: false, message: "Header X-Device-Key wajib diisi" });
   try {

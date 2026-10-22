@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models'
-export type * from './prismaNamespace'
+export type * from '../models.ts'
+export type * from './prismaNamespace.ts'
 
 export const Decimal = runtime.Decimal
 
@@ -206,7 +206,14 @@ export const CameraScalarFieldEnum = {
   lokasi: 'lokasi',
   status: 'status',
   lastSeen: 'lastSeen',
-  deviceKeyHash: 'deviceKeyHash'
+  deviceKeyHash: 'deviceKeyHash',
+  streamHost: 'streamHost',
+  streamPort: 'streamPort',
+  streamUser: 'streamUser',
+  streamPassEnc: 'streamPassEnc',
+  streamPath: 'streamPath',
+  streamFps: 'streamFps',
+  streamEnabled: 'streamEnabled'
 } as const
 
 export type CameraScalarFieldEnum = (typeof CameraScalarFieldEnum)[keyof typeof CameraScalarFieldEnum]

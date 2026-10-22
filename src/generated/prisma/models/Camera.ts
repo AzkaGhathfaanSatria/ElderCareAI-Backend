@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.ts"
+import type * as Prisma from "../internal/prismaNamespace.ts"
 
 /**
  * Model Camera
@@ -29,11 +29,15 @@ export type AggregateCamera = {
 export type CameraAvgAggregateOutputType = {
   id: number | null
   idLansia: number | null
+  streamPort: number | null
+  streamFps: number | null
 }
 
 export type CameraSumAggregateOutputType = {
   id: number | null
   idLansia: number | null
+  streamPort: number | null
+  streamFps: number | null
 }
 
 export type CameraMinAggregateOutputType = {
@@ -44,6 +48,13 @@ export type CameraMinAggregateOutputType = {
   status: $Enums.DeviceStatus | null
   lastSeen: Date | null
   deviceKeyHash: string | null
+  streamHost: string | null
+  streamPort: number | null
+  streamUser: string | null
+  streamPassEnc: string | null
+  streamPath: string | null
+  streamFps: number | null
+  streamEnabled: boolean | null
 }
 
 export type CameraMaxAggregateOutputType = {
@@ -54,6 +65,13 @@ export type CameraMaxAggregateOutputType = {
   status: $Enums.DeviceStatus | null
   lastSeen: Date | null
   deviceKeyHash: string | null
+  streamHost: string | null
+  streamPort: number | null
+  streamUser: string | null
+  streamPassEnc: string | null
+  streamPath: string | null
+  streamFps: number | null
+  streamEnabled: boolean | null
 }
 
 export type CameraCountAggregateOutputType = {
@@ -64,6 +82,13 @@ export type CameraCountAggregateOutputType = {
   status: number
   lastSeen: number
   deviceKeyHash: number
+  streamHost: number
+  streamPort: number
+  streamUser: number
+  streamPassEnc: number
+  streamPath: number
+  streamFps: number
+  streamEnabled: number
   _all: number
 }
 
@@ -71,11 +96,15 @@ export type CameraCountAggregateOutputType = {
 export type CameraAvgAggregateInputType = {
   id?: true
   idLansia?: true
+  streamPort?: true
+  streamFps?: true
 }
 
 export type CameraSumAggregateInputType = {
   id?: true
   idLansia?: true
+  streamPort?: true
+  streamFps?: true
 }
 
 export type CameraMinAggregateInputType = {
@@ -86,6 +115,13 @@ export type CameraMinAggregateInputType = {
   status?: true
   lastSeen?: true
   deviceKeyHash?: true
+  streamHost?: true
+  streamPort?: true
+  streamUser?: true
+  streamPassEnc?: true
+  streamPath?: true
+  streamFps?: true
+  streamEnabled?: true
 }
 
 export type CameraMaxAggregateInputType = {
@@ -96,6 +132,13 @@ export type CameraMaxAggregateInputType = {
   status?: true
   lastSeen?: true
   deviceKeyHash?: true
+  streamHost?: true
+  streamPort?: true
+  streamUser?: true
+  streamPassEnc?: true
+  streamPath?: true
+  streamFps?: true
+  streamEnabled?: true
 }
 
 export type CameraCountAggregateInputType = {
@@ -106,6 +149,13 @@ export type CameraCountAggregateInputType = {
   status?: true
   lastSeen?: true
   deviceKeyHash?: true
+  streamHost?: true
+  streamPort?: true
+  streamUser?: true
+  streamPassEnc?: true
+  streamPath?: true
+  streamFps?: true
+  streamEnabled?: true
   _all?: true
 }
 
@@ -203,6 +253,13 @@ export type CameraGroupByOutputType = {
   status: $Enums.DeviceStatus
   lastSeen: Date | null
   deviceKeyHash: string | null
+  streamHost: string | null
+  streamPort: number | null
+  streamUser: string | null
+  streamPassEnc: string | null
+  streamPath: string | null
+  streamFps: number
+  streamEnabled: boolean
   _count: CameraCountAggregateOutputType | null
   _avg: CameraAvgAggregateOutputType | null
   _sum: CameraSumAggregateOutputType | null
@@ -236,6 +293,13 @@ export type CameraWhereInput = {
   status?: Prisma.EnumDeviceStatusFilter<"Camera"> | $Enums.DeviceStatus
   lastSeen?: Prisma.DateTimeNullableFilter<"Camera"> | Date | string | null
   deviceKeyHash?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamHost?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamPort?: Prisma.IntNullableFilter<"Camera"> | number | null
+  streamUser?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamPassEnc?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamPath?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamFps?: Prisma.FloatFilter<"Camera"> | number
+  streamEnabled?: Prisma.BoolFilter<"Camera"> | boolean
   lansia?: Prisma.XOR<Prisma.LansiaScalarRelationFilter, Prisma.LansiaWhereInput>
   detections?: Prisma.YoloDetectionListRelationFilter
 }
@@ -248,6 +312,13 @@ export type CameraOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   lastSeen?: Prisma.SortOrderInput | Prisma.SortOrder
   deviceKeyHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  streamHost?: Prisma.SortOrderInput | Prisma.SortOrder
+  streamPort?: Prisma.SortOrderInput | Prisma.SortOrder
+  streamUser?: Prisma.SortOrderInput | Prisma.SortOrder
+  streamPassEnc?: Prisma.SortOrderInput | Prisma.SortOrder
+  streamPath?: Prisma.SortOrderInput | Prisma.SortOrder
+  streamFps?: Prisma.SortOrder
+  streamEnabled?: Prisma.SortOrder
   lansia?: Prisma.LansiaOrderByWithRelationInput
   detections?: Prisma.YoloDetectionOrderByRelationAggregateInput
 }
@@ -263,6 +334,13 @@ export type CameraWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumDeviceStatusFilter<"Camera"> | $Enums.DeviceStatus
   lastSeen?: Prisma.DateTimeNullableFilter<"Camera"> | Date | string | null
   deviceKeyHash?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamHost?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamPort?: Prisma.IntNullableFilter<"Camera"> | number | null
+  streamUser?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamPassEnc?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamPath?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamFps?: Prisma.FloatFilter<"Camera"> | number
+  streamEnabled?: Prisma.BoolFilter<"Camera"> | boolean
   lansia?: Prisma.XOR<Prisma.LansiaScalarRelationFilter, Prisma.LansiaWhereInput>
   detections?: Prisma.YoloDetectionListRelationFilter
 }, "id">
@@ -275,6 +353,13 @@ export type CameraOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   lastSeen?: Prisma.SortOrderInput | Prisma.SortOrder
   deviceKeyHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  streamHost?: Prisma.SortOrderInput | Prisma.SortOrder
+  streamPort?: Prisma.SortOrderInput | Prisma.SortOrder
+  streamUser?: Prisma.SortOrderInput | Prisma.SortOrder
+  streamPassEnc?: Prisma.SortOrderInput | Prisma.SortOrder
+  streamPath?: Prisma.SortOrderInput | Prisma.SortOrder
+  streamFps?: Prisma.SortOrder
+  streamEnabled?: Prisma.SortOrder
   _count?: Prisma.CameraCountOrderByAggregateInput
   _avg?: Prisma.CameraAvgOrderByAggregateInput
   _max?: Prisma.CameraMaxOrderByAggregateInput
@@ -293,6 +378,13 @@ export type CameraScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumDeviceStatusWithAggregatesFilter<"Camera"> | $Enums.DeviceStatus
   lastSeen?: Prisma.DateTimeNullableWithAggregatesFilter<"Camera"> | Date | string | null
   deviceKeyHash?: Prisma.StringNullableWithAggregatesFilter<"Camera"> | string | null
+  streamHost?: Prisma.StringNullableWithAggregatesFilter<"Camera"> | string | null
+  streamPort?: Prisma.IntNullableWithAggregatesFilter<"Camera"> | number | null
+  streamUser?: Prisma.StringNullableWithAggregatesFilter<"Camera"> | string | null
+  streamPassEnc?: Prisma.StringNullableWithAggregatesFilter<"Camera"> | string | null
+  streamPath?: Prisma.StringNullableWithAggregatesFilter<"Camera"> | string | null
+  streamFps?: Prisma.FloatWithAggregatesFilter<"Camera"> | number
+  streamEnabled?: Prisma.BoolWithAggregatesFilter<"Camera"> | boolean
 }
 
 export type CameraCreateInput = {
@@ -301,6 +393,13 @@ export type CameraCreateInput = {
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
   deviceKeyHash?: string | null
+  streamHost?: string | null
+  streamPort?: number | null
+  streamUser?: string | null
+  streamPassEnc?: string | null
+  streamPath?: string | null
+  streamFps?: number
+  streamEnabled?: boolean
   lansia: Prisma.LansiaCreateNestedOneWithoutKameraInput
   detections?: Prisma.YoloDetectionCreateNestedManyWithoutKameraInput
 }
@@ -313,6 +412,13 @@ export type CameraUncheckedCreateInput = {
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
   deviceKeyHash?: string | null
+  streamHost?: string | null
+  streamPort?: number | null
+  streamUser?: string | null
+  streamPassEnc?: string | null
+  streamPath?: string | null
+  streamFps?: number
+  streamEnabled?: boolean
   detections?: Prisma.YoloDetectionUncheckedCreateNestedManyWithoutKameraInput
 }
 
@@ -322,6 +428,13 @@ export type CameraUpdateInput = {
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamHost?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPort?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streamUser?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPassEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamFps?: Prisma.FloatFieldUpdateOperationsInput | number
+  streamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lansia?: Prisma.LansiaUpdateOneRequiredWithoutKameraNestedInput
   detections?: Prisma.YoloDetectionUpdateManyWithoutKameraNestedInput
 }
@@ -334,6 +447,13 @@ export type CameraUncheckedUpdateInput = {
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamHost?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPort?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streamUser?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPassEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamFps?: Prisma.FloatFieldUpdateOperationsInput | number
+  streamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detections?: Prisma.YoloDetectionUncheckedUpdateManyWithoutKameraNestedInput
 }
 
@@ -345,6 +465,13 @@ export type CameraCreateManyInput = {
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
   deviceKeyHash?: string | null
+  streamHost?: string | null
+  streamPort?: number | null
+  streamUser?: string | null
+  streamPassEnc?: string | null
+  streamPath?: string | null
+  streamFps?: number
+  streamEnabled?: boolean
 }
 
 export type CameraUpdateManyMutationInput = {
@@ -353,6 +480,13 @@ export type CameraUpdateManyMutationInput = {
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamHost?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPort?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streamUser?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPassEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamFps?: Prisma.FloatFieldUpdateOperationsInput | number
+  streamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CameraUncheckedUpdateManyInput = {
@@ -363,6 +497,13 @@ export type CameraUncheckedUpdateManyInput = {
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamHost?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPort?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streamUser?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPassEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamFps?: Prisma.FloatFieldUpdateOperationsInput | number
+  streamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CameraListRelationFilter = {
@@ -383,11 +524,20 @@ export type CameraCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   lastSeen?: Prisma.SortOrder
   deviceKeyHash?: Prisma.SortOrder
+  streamHost?: Prisma.SortOrder
+  streamPort?: Prisma.SortOrder
+  streamUser?: Prisma.SortOrder
+  streamPassEnc?: Prisma.SortOrder
+  streamPath?: Prisma.SortOrder
+  streamFps?: Prisma.SortOrder
+  streamEnabled?: Prisma.SortOrder
 }
 
 export type CameraAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   idLansia?: Prisma.SortOrder
+  streamPort?: Prisma.SortOrder
+  streamFps?: Prisma.SortOrder
 }
 
 export type CameraMaxOrderByAggregateInput = {
@@ -398,6 +548,13 @@ export type CameraMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   lastSeen?: Prisma.SortOrder
   deviceKeyHash?: Prisma.SortOrder
+  streamHost?: Prisma.SortOrder
+  streamPort?: Prisma.SortOrder
+  streamUser?: Prisma.SortOrder
+  streamPassEnc?: Prisma.SortOrder
+  streamPath?: Prisma.SortOrder
+  streamFps?: Prisma.SortOrder
+  streamEnabled?: Prisma.SortOrder
 }
 
 export type CameraMinOrderByAggregateInput = {
@@ -408,11 +565,20 @@ export type CameraMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   lastSeen?: Prisma.SortOrder
   deviceKeyHash?: Prisma.SortOrder
+  streamHost?: Prisma.SortOrder
+  streamPort?: Prisma.SortOrder
+  streamUser?: Prisma.SortOrder
+  streamPassEnc?: Prisma.SortOrder
+  streamPath?: Prisma.SortOrder
+  streamFps?: Prisma.SortOrder
+  streamEnabled?: Prisma.SortOrder
 }
 
 export type CameraSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   idLansia?: Prisma.SortOrder
+  streamPort?: Prisma.SortOrder
+  streamFps?: Prisma.SortOrder
 }
 
 export type CameraNullableScalarRelationFilter = {
@@ -462,6 +628,10 @@ export type CameraUncheckedUpdateManyWithoutLansiaNestedInput = {
   deleteMany?: Prisma.CameraScalarWhereInput | Prisma.CameraScalarWhereInput[]
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 export type CameraCreateNestedOneWithoutDetectionsInput = {
   create?: Prisma.XOR<Prisma.CameraCreateWithoutDetectionsInput, Prisma.CameraUncheckedCreateWithoutDetectionsInput>
   connectOrCreate?: Prisma.CameraCreateOrConnectWithoutDetectionsInput
@@ -484,6 +654,13 @@ export type CameraCreateWithoutLansiaInput = {
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
   deviceKeyHash?: string | null
+  streamHost?: string | null
+  streamPort?: number | null
+  streamUser?: string | null
+  streamPassEnc?: string | null
+  streamPath?: string | null
+  streamFps?: number
+  streamEnabled?: boolean
   detections?: Prisma.YoloDetectionCreateNestedManyWithoutKameraInput
 }
 
@@ -494,6 +671,13 @@ export type CameraUncheckedCreateWithoutLansiaInput = {
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
   deviceKeyHash?: string | null
+  streamHost?: string | null
+  streamPort?: number | null
+  streamUser?: string | null
+  streamPassEnc?: string | null
+  streamPath?: string | null
+  streamFps?: number
+  streamEnabled?: boolean
   detections?: Prisma.YoloDetectionUncheckedCreateNestedManyWithoutKameraInput
 }
 
@@ -534,6 +718,13 @@ export type CameraScalarWhereInput = {
   status?: Prisma.EnumDeviceStatusFilter<"Camera"> | $Enums.DeviceStatus
   lastSeen?: Prisma.DateTimeNullableFilter<"Camera"> | Date | string | null
   deviceKeyHash?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamHost?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamPort?: Prisma.IntNullableFilter<"Camera"> | number | null
+  streamUser?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamPassEnc?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamPath?: Prisma.StringNullableFilter<"Camera"> | string | null
+  streamFps?: Prisma.FloatFilter<"Camera"> | number
+  streamEnabled?: Prisma.BoolFilter<"Camera"> | boolean
 }
 
 export type CameraCreateWithoutDetectionsInput = {
@@ -542,6 +733,13 @@ export type CameraCreateWithoutDetectionsInput = {
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
   deviceKeyHash?: string | null
+  streamHost?: string | null
+  streamPort?: number | null
+  streamUser?: string | null
+  streamPassEnc?: string | null
+  streamPath?: string | null
+  streamFps?: number
+  streamEnabled?: boolean
   lansia: Prisma.LansiaCreateNestedOneWithoutKameraInput
 }
 
@@ -553,6 +751,13 @@ export type CameraUncheckedCreateWithoutDetectionsInput = {
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
   deviceKeyHash?: string | null
+  streamHost?: string | null
+  streamPort?: number | null
+  streamUser?: string | null
+  streamPassEnc?: string | null
+  streamPath?: string | null
+  streamFps?: number
+  streamEnabled?: boolean
 }
 
 export type CameraCreateOrConnectWithoutDetectionsInput = {
@@ -577,6 +782,13 @@ export type CameraUpdateWithoutDetectionsInput = {
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamHost?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPort?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streamUser?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPassEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamFps?: Prisma.FloatFieldUpdateOperationsInput | number
+  streamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lansia?: Prisma.LansiaUpdateOneRequiredWithoutKameraNestedInput
 }
 
@@ -588,6 +800,13 @@ export type CameraUncheckedUpdateWithoutDetectionsInput = {
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamHost?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPort?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streamUser?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPassEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamFps?: Prisma.FloatFieldUpdateOperationsInput | number
+  streamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type CameraCreateManyLansiaInput = {
@@ -597,6 +816,13 @@ export type CameraCreateManyLansiaInput = {
   status?: $Enums.DeviceStatus
   lastSeen?: Date | string | null
   deviceKeyHash?: string | null
+  streamHost?: string | null
+  streamPort?: number | null
+  streamUser?: string | null
+  streamPassEnc?: string | null
+  streamPath?: string | null
+  streamFps?: number
+  streamEnabled?: boolean
 }
 
 export type CameraUpdateWithoutLansiaInput = {
@@ -605,6 +831,13 @@ export type CameraUpdateWithoutLansiaInput = {
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamHost?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPort?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streamUser?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPassEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamFps?: Prisma.FloatFieldUpdateOperationsInput | number
+  streamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detections?: Prisma.YoloDetectionUpdateManyWithoutKameraNestedInput
 }
 
@@ -615,6 +848,13 @@ export type CameraUncheckedUpdateWithoutLansiaInput = {
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamHost?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPort?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streamUser?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPassEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamFps?: Prisma.FloatFieldUpdateOperationsInput | number
+  streamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detections?: Prisma.YoloDetectionUncheckedUpdateManyWithoutKameraNestedInput
 }
 
@@ -625,6 +865,13 @@ export type CameraUncheckedUpdateManyWithoutLansiaInput = {
   status?: Prisma.EnumDeviceStatusFieldUpdateOperationsInput | $Enums.DeviceStatus
   lastSeen?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deviceKeyHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamHost?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPort?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  streamUser?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPassEnc?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  streamFps?: Prisma.FloatFieldUpdateOperationsInput | number
+  streamEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -666,6 +913,13 @@ export type CameraSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   status?: boolean
   lastSeen?: boolean
   deviceKeyHash?: boolean
+  streamHost?: boolean
+  streamPort?: boolean
+  streamUser?: boolean
+  streamPassEnc?: boolean
+  streamPath?: boolean
+  streamFps?: boolean
+  streamEnabled?: boolean
   lansia?: boolean | Prisma.LansiaDefaultArgs<ExtArgs>
   detections?: boolean | Prisma.Camera$detectionsArgs<ExtArgs>
   _count?: boolean | Prisma.CameraCountOutputTypeDefaultArgs<ExtArgs>
@@ -679,6 +933,13 @@ export type CameraSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   status?: boolean
   lastSeen?: boolean
   deviceKeyHash?: boolean
+  streamHost?: boolean
+  streamPort?: boolean
+  streamUser?: boolean
+  streamPassEnc?: boolean
+  streamPath?: boolean
+  streamFps?: boolean
+  streamEnabled?: boolean
   lansia?: boolean | Prisma.LansiaDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["camera"]>
 
@@ -690,6 +951,13 @@ export type CameraSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   status?: boolean
   lastSeen?: boolean
   deviceKeyHash?: boolean
+  streamHost?: boolean
+  streamPort?: boolean
+  streamUser?: boolean
+  streamPassEnc?: boolean
+  streamPath?: boolean
+  streamFps?: boolean
+  streamEnabled?: boolean
   lansia?: boolean | Prisma.LansiaDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["camera"]>
 
@@ -701,9 +969,16 @@ export type CameraSelectScalar = {
   status?: boolean
   lastSeen?: boolean
   deviceKeyHash?: boolean
+  streamHost?: boolean
+  streamPort?: boolean
+  streamUser?: boolean
+  streamPassEnc?: boolean
+  streamPath?: boolean
+  streamFps?: boolean
+  streamEnabled?: boolean
 }
 
-export type CameraOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "idLansia" | "namaKamera" | "lokasi" | "status" | "lastSeen" | "deviceKeyHash", ExtArgs["result"]["camera"]>
+export type CameraOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "idLansia" | "namaKamera" | "lokasi" | "status" | "lastSeen" | "deviceKeyHash" | "streamHost" | "streamPort" | "streamUser" | "streamPassEnc" | "streamPath" | "streamFps" | "streamEnabled", ExtArgs["result"]["camera"]>
 export type CameraInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   lansia?: boolean | Prisma.LansiaDefaultArgs<ExtArgs>
   detections?: boolean | Prisma.Camera$detectionsArgs<ExtArgs>
@@ -730,6 +1005,13 @@ export type $CameraPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     status: $Enums.DeviceStatus
     lastSeen: Date | null
     deviceKeyHash: string | null
+    streamHost: string | null
+    streamPort: number | null
+    streamUser: string | null
+    streamPassEnc: string | null
+    streamPath: string | null
+    streamFps: number
+    streamEnabled: boolean
   }, ExtArgs["result"]["camera"]>
   composites: {}
 }
@@ -1162,6 +1444,13 @@ export interface CameraFieldRefs {
   readonly status: Prisma.FieldRef<"Camera", 'DeviceStatus'>
   readonly lastSeen: Prisma.FieldRef<"Camera", 'DateTime'>
   readonly deviceKeyHash: Prisma.FieldRef<"Camera", 'String'>
+  readonly streamHost: Prisma.FieldRef<"Camera", 'String'>
+  readonly streamPort: Prisma.FieldRef<"Camera", 'Int'>
+  readonly streamUser: Prisma.FieldRef<"Camera", 'String'>
+  readonly streamPassEnc: Prisma.FieldRef<"Camera", 'String'>
+  readonly streamPath: Prisma.FieldRef<"Camera", 'String'>
+  readonly streamFps: Prisma.FieldRef<"Camera", 'Float'>
+  readonly streamEnabled: Prisma.FieldRef<"Camera", 'Boolean'>
 }
     
 

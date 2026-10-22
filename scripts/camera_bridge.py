@@ -15,9 +15,17 @@ Contoh:
 Opsi: --url (default http://localhost:4000)  --fps (default 1)  --width (default 640, 0 = asli)
       --quality JPEG 1-100 (default 80)  --count berhenti setelah N frame (default 0 = terus)  --preview tampilkan jendela
 Key juga bisa lewat variabel lingkungan DEVICE_KEY.
+
+Mode yang dikelola server (dipakai halaman Perangkat, tidak perlu dijalankan manual):
+  CAMERA_SOURCE = alamat RTSP (lewat environment, bukan argumen, agar password tidak terlihat di daftar proses)
+  CAMERA_ID + INTERNAL_TOKEN = pengganti --key
+  --probe : coba buka stream & ambil satu gambar, cetak PROBE_OK / PROBE_FAIL, lalu keluar (kode 0 / 1)
+Kode keluar 3 = server menolak kredensial (tidak perlu dicoba ulang).
 """
 import argparse
+import json
 import os
+import re
 import sys
 import threading
 import time
@@ -32,19 +40,24 @@ except ImportError:
 def parse_args():
     p = argparse.ArgumentParser(description="Kirim frame kamera ke ElderCare AI")
     p.add_argument("--key", default=os.environ.get("DEVICE_KEY"), help="device key kamera (ecc_...)")
-    p.add_argument("--source", default="0", help="indeks webcam, URL RTSP/HTTP, atau path file video")
+    p.add_argument("--source", default=os.environ.get("CAMERA_SOURCE", "0"), help="indeks webcam, URL RTSP/HTTP, atau path file video")
     p.add_argument("--url", default="http://localhost:4000")
     p.add_argument("--fps", type=float, default=1.0, help="frame per detik yang dikirim (1-2 disarankan)")
     p.add_argument("--width", type=int, default=640)
     p.add_argument("--quality", type=int, default=80)
     p.add_argument("--count", type=int, default=0)
     p.add_argument("--preview", action="store_true")
+    p.add_argument("--probe", action="store_true", help="hanya uji buka stream lalu keluar")
     a = p.parse_args()
-    if not a.key:
+    a.internal = bool(os.environ.get("INTERNAL_TOKEN") and os.environ.get("CAMERA_ID"))
+    if not a.key and not a.internal and not a.probe:
         p.error("--key wajib (didapat saat mendaftarkan kamera)")
     if a.fps <= 0:
         p.error("--fps harus > 0")
     return a
+
+
+os.environ.setdefault("OPENCV_FFMPEG_CAPTURE_OPTIONS", "rtsp_transport;tcp")
 
 
 def open_capture(source):
@@ -52,6 +65,14 @@ def open_capture(source):
         idx = int(source)
         return cv2.VideoCapture(idx, cv2.CAP_DSHOW) if os.name == "nt" else cv2.VideoCapture(idx)
     return cv2.VideoCapture(source)
+
+
+def open_capture_timed(source, ms=5000):
+    """Buka stream dengan batas waktu (untuk uji/deteksi), agar port yang tidak membalas tidak membuat macet."""
+    try:
+        return cv2.VideoCapture(source, cv2.CAP_FFMPEG, [cv2.CAP_PROP_OPEN_TIMEOUT_MSEC, ms, cv2.CAP_PROP_READ_TIMEOUT_MSEC, ms])
+    except Exception:
+        return open_capture(source)
 
 
 class LatestFrame:
@@ -99,10 +120,47 @@ def encode(frame, width, quality):
     return buf.tobytes() if ok else None
 
 
+def probe(source):
+    """Buka stream & tunggu satu gambar. Tidak mengirim apa pun ke server.
+    Jika CAMERA_CANDIDATES (JSON list URL) diisi, tiap kandidat dicoba berurutan (deteksi otomatis port/path)."""
+    raw = os.environ.get("CAMERA_CANDIDATES")
+    cands = json.loads(raw) if raw else [source]
+    wait = 8 if len(cands) > 1 else 20
+    open_ms = int(os.environ.get("CAMERA_OPEN_MS", "12000"))
+    hung = 0
+    for i, url in enumerate(cands):
+        t0 = time.time()
+        cap = open_capture_timed(url, open_ms)
+        took = (time.time() - t0) * 1000
+        if cap.isOpened():
+            end = time.time() + wait
+            while time.time() < end:
+                ok, frame = cap.read()
+                if ok and frame is not None:
+                    h, w = frame.shape[:2]
+                    print(f"PROBE_OK {i} {w}x{h}", flush=True)
+                    cap.release()
+                    sys.exit(0)
+                time.sleep(0.3)
+        cap.release()
+        # Percobaan yang habis waktu (bukan ditolak cepat) berarti port tidak membalas RTSP; jangan buang waktu.
+        hung = hung + 1 if (not cap.isOpened() and took >= open_ms * 0.9) else 0
+        if len(cands) > 1 and hung >= 4:
+            print("PROBE_FAIL Port terbuka tetapi tidak membalas sebagai kamera RTSP.", flush=True)
+            sys.exit(1)
+    print("PROBE_FAIL Tidak ada alamat stream yang cocok atau tidak ada gambar yang diterima.", flush=True)
+    sys.exit(1)
+
+
 def main():
     a = parse_args()
+    if a.probe:
+        probe(a.source)
     endpoint = a.url.rstrip("/") + "/ingest/camera"
-    headers = {"Content-Type": "image/jpeg", "X-Device-Key": a.key}
+    if a.internal:
+        headers = {"Content-Type": "image/jpeg", "X-Internal-Token": os.environ["INTERNAL_TOKEN"], "X-Camera-Id": os.environ["CAMERA_ID"]}
+    else:
+        headers = {"Content-Type": "image/jpeg", "X-Device-Key": a.key}
     period = 1.0 / a.fps
     is_file = os.path.isfile(a.source)
     if not is_file and not a.source.isdigit() and "://" not in a.source:
@@ -117,7 +175,7 @@ def main():
 
     sent = falls = alerts = errors = 0
     total_latency = 0.0
-    print(f"Mengirim ke {endpoint} setiap {period:.1f} dtk dari '{a.source}' - Ctrl+C untuk berhenti", flush=True)
+    print(f"Mengirim ke {endpoint} setiap {period:.1f} dtk dari '{re.sub(r"//[^@/]+@", "//***@", a.source)}' - Ctrl+C untuk berhenti", flush=True)
 
     try:
         while a.count == 0 or sent < a.count:
@@ -159,7 +217,8 @@ def main():
                 continue
 
             if r.status_code == 401:
-                sys.exit("Device key ditolak (401). Periksa --key atau buat key baru di aplikasi.")
+                print("Device key / token ditolak (401). Periksa --key atau buat key baru di aplikasi.", flush=True)
+                sys.exit(3)
             if r.status_code != 200:
                 errors += 1
                 msg = r.json().get("message", "") if r.headers.get("content-type", "").startswith("application/json") else ""

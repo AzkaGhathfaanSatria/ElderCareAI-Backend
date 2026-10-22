@@ -345,6 +345,7 @@ function cameraDto(c: { id: number; idLansia: number; namaKamera: string; lokasi
     type: "Kamera CCTV",
     kind: "Kamera CCTV",
     name: c.namaKamera,
+    location: c.lokasi,
     status: c.status === "aktif" && c.lastSeen && Date.now() - c.lastSeen.getTime() < RECENT_MS ? "Terhubung" : "Terputus",
     battery: null,
     lastSeen: c.lastSeen?.toISOString() ?? null,
@@ -451,6 +452,58 @@ router.post("/devices/:id/pair", async (req: AuthRequest, res) => {
     return res.json({ device: cameraDto(c, elder.nama) });
   } catch (e) {
     return fail(res, e, "Gagal memasangkan perangkat");
+  }
+});
+
+// Ubah perangkat tanpa mendaftarkan ulang lansia: nama/ID, lokasi (kamera), atau pindah ke lansia lain.
+const deviceEditBody = z.object({
+  deviceId: z.string().trim().min(1).max(100).optional(),
+  lokasi: z.string().trim().min(1).max(100).optional(),
+  elderId: z.union([z.string(), z.number()]).optional(),
+});
+
+router.patch("/devices/:id", async (req: AuthRequest, res) => {
+  try {
+    const parsed = parseDeviceId(String(req.params.id));
+    if (!parsed) return res.status(400).json({ success: false, message: "ID perangkat tidak valid" });
+    if (req.user!.role === "tenaga_medis") return res.status(403).json({ success: false, message: "Tidak diizinkan" });
+    const body = deviceEditBody.parse(req.body);
+
+    // Pemilik lama harus bisa diakses pengguna; lansia tujuan (jika pindah) juga.
+    const current =
+      parsed.kind === "w"
+        ? await prisma.wearable.findUnique({ where: { id: parsed.id } })
+        : await prisma.camera.findUnique({ where: { id: parsed.id } });
+    const currentElder = current ? await findElder(req, current.idLansia) : null;
+    if (!current || !currentElder) return res.status(404).json({ success: false, message: "Perangkat tidak ditemukan" });
+    let targetElder = currentElder;
+    if (body.elderId !== undefined) {
+      const e = await findElder(req, body.elderId);
+      if (!e) return res.status(404).json({ success: false, message: "Lansia tujuan tidak ditemukan" });
+      targetElder = e;
+    }
+
+    if (parsed.kind === "w") {
+      const w = await prisma.wearable.update({
+        where: { id: parsed.id },
+        data: {
+          ...(body.deviceId ? { tipePerangkat: body.deviceId.slice(0, 50) } : {}),
+          ...(targetElder.id !== currentElder.id ? { idLansia: targetElder.id, tanggalPairing: new Date() } : {}),
+        },
+      });
+      return res.json({ device: wearableDto(w, targetElder.nama) });
+    }
+    const c = await prisma.camera.update({
+      where: { id: parsed.id },
+      data: {
+        ...(body.deviceId ? { namaKamera: body.deviceId.slice(0, 100) } : {}),
+        ...(body.lokasi ? { lokasi: body.lokasi } : {}),
+        ...(targetElder.id !== currentElder.id ? { idLansia: targetElder.id } : {}),
+      },
+    });
+    return res.json({ device: cameraDto(c, targetElder.nama) });
+  } catch (e) {
+    return fail(res, e, "Gagal mengubah perangkat");
   }
 });
 
