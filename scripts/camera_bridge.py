@@ -175,7 +175,8 @@ def main():
 
     sent = falls = alerts = errors = 0
     total_latency = 0.0
-    print(f"Mengirim ke {endpoint} setiap {period:.1f} dtk dari '{re.sub(r"//[^@/]+@", "//***@", a.source)}' - Ctrl+C untuk berhenti", flush=True)
+    shown_source = re.sub(r"//[^@/]+@", "//***@", a.source)  # sembunyikan user:password (di luar f-string agar jalan di Python < 3.12)
+    print(f"Mengirim ke {endpoint} setiap {period:.1f} dtk dari '{shown_source}' - Ctrl+C untuk berhenti", flush=True)
 
     try:
         while a.count == 0 or sent < a.count:

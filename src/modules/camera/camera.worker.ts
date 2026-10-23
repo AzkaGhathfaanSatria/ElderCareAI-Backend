@@ -242,6 +242,11 @@ export async function detectStream(cfg: StreamConfig): Promise<DetectResult> {
     const hit = cands[Number(m[1])];
     return { ok: true, port: hit.port, path: hit.path, message: `Terhubung otomatis (port ${hit.port}${hit.path ? ", " + hit.path : ""}), gambar ${m[2]} diterima.` };
   }
+  // Python sendiri yang error (bukan masalah kamera): tampilkan penyebab aslinya, jangan menebak soal password.
+  if (/SyntaxError|ModuleNotFoundError|ImportError|Pasang dulu|Traceback/.test(r.out)) {
+    const tail = scrub(r.out.trim().split(/\r?\n/).filter(Boolean).slice(-1).join(" "));
+    return { ok: false, message: `Program Python gagal berjalan (bukan masalah kamera): ${tail}` };
+  }
   if (/tidak membalas/.test(r.out)) return { ok: false, message: `Port terbuka di ${cfg.host}, tetapi tidak membalas sebagai kamera RTSP. Periksa IP dan port kameranya.` };
   if (r.timedOut) return { ok: false, message: "Waktu habis saat mencari alamat stream. Coba isi Port dan Path di Pengaturan lanjutan." };
   return { ok: false, message: cfg.path ? "Gagal membuka stream. Periksa username, password, dan path." : "Kamera terjangkau, tetapi stream tidak bisa dibuka. Username/password mungkin salah, atau merek kamera memakai path khusus (isi di Pengaturan lanjutan)." };
