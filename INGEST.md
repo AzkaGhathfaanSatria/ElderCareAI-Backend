@@ -85,3 +85,12 @@ Tips agar hasil baik:
 - Di laptop CPU (mis. i3) inferensi lebih lambat dari 0.12 dtk; mulai dari --fps 1. Program akan memberi peringatan
   jika pengiriman lebih lambat dari interval.
 - Model dimuat saat Flask menyala (POSE_WARMUP=1) sehingga frame pertama tidak lambat; set 0 untuk menonaktifkan.
+
+## Push notification (alert ke HP)
+Aplikasi mobile mendaftarkan token FCM ke `POST /me/push-tokens` (dan menghapusnya lewat `DELETE /me/push-tokens` saat logout).
+Saat alert dibuat, backend mengirim push ke keluarga + tenaga medis berizin yang level minimumnya terpenuhi dan kanal
+`push`-nya aktif (default aktif). Aktifkan dengan kunci service account Firebase: `FCM_SERVICE_ACCOUNT_FILE` di `.env`.
+Tanpa kunci itu push dilewati, alert tetap masuk lewat dashboard. Token yang sudah tidak berlaku dihapus otomatis.
+Uji: `POST /me/push-test` (Bearer) mengirim notifikasi uji ke semua perangkat akun itu; balasannya
+`{ enabled, tokens, sent, failed, removed }`.
+Ringkasan lansia (`GET /elders/:id/summary`) kini juga memuat `oxygen`, `temperature`, `hrv` (nilai terbaru 24 jam, null bila belum ada).

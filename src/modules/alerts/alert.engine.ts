@@ -1,6 +1,7 @@
 import prisma from "../../lib/prisma";
 import { publish } from "../../common/events";
 import { inferSensor } from "../../integrations/aiClient";
+import { sendPushToUsers } from "../../integrations/push";
 import { latestBaseline } from "../baseline/baseline.service";
 
 // Ambang bisa diubah lewat env tanpa menyentuh kode.
@@ -54,7 +55,7 @@ async function raiseAlert(a: { idLansia: number; jenis: string; severity: Level;
     if (e?.code === "P2002") return null; // sudah ada alert yang sama dalam cooldown
     throw e;
   }
-  await notifyRecipients(alert.id, a.idLansia, a.severity);
+  await notifyRecipients(alert.id, a.idLansia, a.severity, a.jenis);
   publish(a.idLansia, "alert", { id: String(alert.id), type: a.jenis, level: a.severity });
   if (a.fall) publish(a.idLansia, "fall", { id: String(alert.id) });
   return alert;
@@ -149,9 +150,12 @@ export async function raiseFall(a: { idLansia: number; jenis: string; idDeteksi?
   });
 }
 
-/** Penerima: keluarga pemilik + tenaga medis berizin aktif, disaring dengan level minimum tiap user. */
-async function notifyRecipients(idAlert: bigint, idLansia: number, severity: Level) {
-  const lansia = await prisma.lansia.findUnique({ where: { id: idLansia }, select: { idUserKeluarga: true } });
+/**
+ * Penerima: keluarga pemilik + tenaga medis berizin aktif, disaring dengan level minimum tiap user.
+ * Kanal dashboard (baris di tb_notifikasi) dan push (FCM) diatur terpisah oleh preferensi masing-masing user.
+ */
+async function notifyRecipients(idAlert: bigint, idLansia: number, severity: Level, jenis: string) {
+  const lansia = await prisma.lansia.findUnique({ where: { id: idLansia }, select: { idUserKeluarga: true, nama: true } });
   if (!lansia) return;
   const now = new Date();
   const grants = await prisma.accessGrant.findMany({
@@ -162,13 +166,25 @@ async function notifyRecipients(idAlert: bigint, idLansia: number, severity: Lev
   const prefs = await prisma.notificationPreference.findMany({ where: { idUser: { in: userIds } } });
   const prefBy = new Map(prefs.map((p) => [p.idUser, p]));
 
-  const rows = userIds
-    .filter((id) => {
-      const min = (prefBy.get(id)?.levelMinimum ?? "sedang") as Level;
-      const showOnDashboard = prefBy.get(id)?.dashboard ?? true;
-      return showOnDashboard && ORDER[severity] >= (ORDER[min] ?? 1);
-    })
+  // Hanya user yang level minimumnya terpenuhi yang diberi tahu (lewat kanal apa pun).
+  const eligible = userIds.filter((id) => {
+    const min = (prefBy.get(id)?.levelMinimum ?? "sedang") as Level;
+    return ORDER[severity] >= (ORDER[min] ?? 1);
+  });
+
+  const rows = eligible
+    .filter((id) => prefBy.get(id)?.dashboard ?? true)
     .map((id) => ({ idAlert, idUserPenerima: id, channel: "dashboard" as const, status: "terkirim" as const, waktuKirim: now }));
-  // Kanal push/WhatsApp/email belum diimplementasi: hanya notifikasi dashboard yang dibuat.
   if (rows.length) await prisma.notification.createMany({ data: rows });
+
+  // Push (FCM): diproses di belakang supaya tidak menahan ingest. Tanpa kunci FCM, langkah ini tidak melakukan apa-apa.
+  const pushUsers = eligible.filter((id) => prefBy.get(id)?.push ?? true);
+  if (pushUsers.length) {
+    void sendPushToUsers(pushUsers, {
+      title: severity === "tinggi" ? `Peringatan: ${jenis}` : jenis,
+      body: `${jenis} pada ${lansia.nama}`,
+      data: { alertId: String(idAlert), elderId: String(idLansia), level: severity, type: jenis },
+    }).catch((e) => console.error("push", e));
+  }
+  // WhatsApp/email belum diimplementasi.
 }

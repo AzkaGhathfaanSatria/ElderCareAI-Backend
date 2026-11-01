@@ -207,7 +207,7 @@ router.get("/elders/:id/summary", async (req: AuthRequest, res) => {
     const wearables = await prisma.wearable.findMany({ where: { idLansia: elder.id }, select: { id: true } });
     const wearableIds = wearables.map((w) => w.id);
 
-    const [vital, vitalWithSleep, latestRisk, latestAlert, activities] = await Promise.all([
+    const [vital, vitalWithSleep, latestRisk, latestAlert, activities, recentData] = await Promise.all([
       prisma.vitalSign.findFirst({ where: { idWearable: { in: wearableIds } }, orderBy: { timestamp: "desc" } }),
       prisma.vitalSign.findMany({
         where: { idWearable: { in: wearableIds }, polaTidur: { not: Prisma.DbNull } },
@@ -223,7 +223,22 @@ router.get("/elders/:id/summary", async (req: AuthRequest, res) => {
         where: { sensor: { idLansia: elder.id }, timestamp: { gte: new Date(Date.now() - 7 * 86400000) } },
         select: { timestamp: true },
       }),
+      // Metrik tambahan dari wearable (SpO2, suhu, HRV) ada di tb_data_wearable, bukan tb_vital_sign.
+      prisma.wearableData.findMany({
+        where: { idWearable: { in: wearableIds }, timestamp: { gte: new Date(Date.now() - 24 * 3600_000) } },
+        orderBy: { timestamp: "desc" },
+        take: 200,
+        select: { oxygenLevel: true, temperature: true, heartRateVariability: true },
+      }),
     ]);
+    // Nilai terbaru yang tidak kosong dalam 24 jam terakhir (null bila belum ada).
+    const latestOf = (pick: (r: (typeof recentData)[number]) => number | null) => {
+      for (const r of recentData) {
+        const v = pick(r);
+        if (v !== null) return v;
+      }
+      return null;
+    };
 
     // Aktivitas 7 hari terakhir: jumlah kejadian sensor per hari, diskalakan ke persen (hari tersibuk = 100%)
     const counts = new Map<string, { label: string; n: number }>();
@@ -244,6 +259,9 @@ router.get("/elders/:id/summary", async (req: AuthRequest, res) => {
 
     return res.json({
       heartRate: vital?.detakJantung ?? 0,
+      oxygen: latestOf((r) => r.oxygenLevel),
+      temperature: latestOf((r) => r.temperature),
+      hrv: latestOf((r) => r.heartRateVariability),
       activity: today,
       sleep: sleepRecord ? sleepHours(sleepRecord.polaTidur) : 0,
       risk,
@@ -375,6 +393,30 @@ router.get("/devices", async (req: AuthRequest, res) => {
   }
 });
 
+// Nama perangkat harus unik per lansia dan per jenis (wearable/kamera), tanpa membedakan huruf besar-kecil.
+async function deviceNameTaken(kind: "w" | "c", elderId: number, name: string, exceptId?: number): Promise<boolean> {
+  const clean = name.trim();
+  if (kind === "w") {
+    const found = await prisma.wearable.findFirst({
+      where: { idLansia: elderId, tipePerangkat: { equals: clean, mode: "insensitive" }, ...(exceptId ? { id: { not: exceptId } } : {}) },
+      select: { id: true },
+    });
+    return Boolean(found);
+  }
+  const found = await prisma.camera.findFirst({
+    where: { idLansia: elderId, namaKamera: { equals: clean, mode: "insensitive" }, ...(exceptId ? { id: { not: exceptId } } : {}) },
+    select: { id: true },
+  });
+  return Boolean(found);
+}
+
+function duplicateNameResponse(res: Response, kind: "w" | "c", name: string, elderName: string) {
+  return res.status(409).json({
+    success: false,
+    message: `${kind === "w" ? "Wearable" : "Kamera"} dengan nama "${name.trim()}" sudah terdaftar untuk ${elderName}. Pakai nama lain.`,
+  });
+}
+
 const deviceBody = z.object({
   deviceId: z.string().min(1).max(100),
   elderId: z.union([z.string(), z.number()]),
@@ -385,6 +427,8 @@ router.post("/devices/wearables", async (req: AuthRequest, res) => {
     const body = deviceBody.parse(req.body);
     const elder = await findElder(req, body.elderId);
     if (!elder) return res.status(404).json({ success: false, message: "Lansia tidak ditemukan" });
+    if (await deviceNameTaken("w", elder.id, body.deviceId.slice(0, 50)))
+      return duplicateNameResponse(res, "w", body.deviceId, elder.nama);
     // Device key acak: ditampilkan SEKALI, di database hanya disimpan hash-nya.
     const deviceKey = `ecw_${randomBytes(24).toString("hex")}`;
     const w = await prisma.wearable.create({
@@ -401,6 +445,8 @@ router.post("/devices/cameras", async (req: AuthRequest, res) => {
     const body = deviceBody.parse(req.body);
     const elder = await findElder(req, body.elderId);
     if (!elder) return res.status(404).json({ success: false, message: "Lansia tidak ditemukan" });
+    if (await deviceNameTaken("c", elder.id, body.deviceId.slice(0, 100)))
+      return duplicateNameResponse(res, "c", body.deviceId, elder.nama);
     const deviceKey = `ecc_${randomBytes(24).toString("hex")}`;
     const c = await prisma.camera.create({
       data: { idLansia: elder.id, namaKamera: body.deviceId.slice(0, 100), lokasi: "Belum diatur", deviceKeyHash: hashDeviceKey(deviceKey) },
@@ -482,6 +528,12 @@ router.patch("/devices/:id", async (req: AuthRequest, res) => {
       if (!e) return res.status(404).json({ success: false, message: "Lansia tujuan tidak ditemukan" });
       targetElder = e;
     }
+
+    // Nama (baru atau yang sudah ada, bila pindah lansia) tidak boleh kembar di lansia tujuan.
+    const nameToCheck = body.deviceId ?? (parsed.kind === "w" ? (current as { tipePerangkat: string }).tipePerangkat : (current as { namaKamera: string }).namaKamera);
+    const renamedOrMoved = body.deviceId !== undefined || targetElder.id !== currentElder.id;
+    if (renamedOrMoved && (await deviceNameTaken(parsed.kind, targetElder.id, nameToCheck, parsed.id)))
+      return duplicateNameResponse(res, parsed.kind, nameToCheck, targetElder.nama);
 
     if (parsed.kind === "w") {
       const w = await prisma.wearable.update({

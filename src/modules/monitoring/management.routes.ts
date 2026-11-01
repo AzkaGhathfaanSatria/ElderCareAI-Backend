@@ -4,6 +4,7 @@ import { z } from "zod";
 import prisma from "../../lib/prisma";
 import { authenticate, AuthRequest } from "../../common/middleware/auth.middleware";
 import { baselineStatus, trainElderBaseline } from "../baseline/baseline.service";
+import { sendPushToUsers } from "../../integrations/push";
 
 /**
  * Route pelengkap agar semua halaman frontend punya endpoint (data kosong tetap 200, bukan 404):
@@ -90,6 +91,31 @@ router.post("/me/push-tokens", async (req: AuthRequest, res) => {
     return res.status(201).json({ success: true });
   } catch (e) {
     return fail(res, e, "Gagal menyimpan push token");
+  }
+});
+
+// Dipanggil aplikasi saat logout supaya perangkat itu tidak lagi menerima notifikasi akun ini.
+router.delete("/me/push-tokens", async (req: AuthRequest, res) => {
+  try {
+    const b = z.object({ token: z.string().min(1).max(500) }).parse(req.body);
+    await prisma.pushToken.deleteMany({ where: { token: b.token, idUser: req.user!.userId } });
+    return res.json({ success: true });
+  } catch (e) {
+    return fail(res, e, "Gagal menghapus push token");
+  }
+});
+
+// Kirim notifikasi uji ke semua perangkat akun ini (untuk memastikan push sudah tersambung).
+router.post("/me/push-test", async (req: AuthRequest, res) => {
+  try {
+    const r = await sendPushToUsers([req.user!.userId], {
+      title: "Tes notifikasi ElderCare AI",
+      body: "Jika Anda melihat ini, notifikasi peringatan sudah tersambung.",
+      data: { type: "test" },
+    });
+    return res.json({ success: true, ...r });
+  } catch (e) {
+    return fail(res, e, "Gagal mengirim notifikasi uji");
   }
 });
 
