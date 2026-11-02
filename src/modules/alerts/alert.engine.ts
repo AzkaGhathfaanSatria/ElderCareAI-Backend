@@ -19,6 +19,8 @@ type Level = keyof typeof ORDER;
  * Aturan sederhana (tanpa AI): detak jantung di luar ambang pada N pembacaan terakhir berturut-turut.
  * Dedup + cooldown lewat dedupKey per jendela COOLDOWN_MIN menit (kolom unik di tb_alert).
  */
+const WEARABLE_FALL_ALERTS = process.env.WEARABLE_FALL_ALERTS === "true";
+
 export async function evaluateWearable(idWearable: number, idLansia: number) {
   const last = await prisma.vitalSign.findMany({
     where: { idWearable, detakJantung: { not: null } },
@@ -107,7 +109,10 @@ export async function evaluateSensor(idWearable: number, idLansia: number, at: D
   });
   if (!r || r.status === "NORMAL") return null;
 
+  // Jatuh ditentukan KAMERA (CCTV). Jam pintar hanya mengumpulkan data dan membangun baseline anomali,
+  // jadi label JATUH dari sensor tidak membuat alert kecuali WEARABLE_FALL_ALERTS=true.
   const jatuh = r.status === "JATUH";
+  if (jatuh && !WEARABLE_FALL_ALERTS) return null;
   const severity: Level = jatuh ? "tinggi" : "sedang";
   const pred = await prisma.riskPrediction.create({
     data: { idLansia, skorRisiko: r.peluang_jatuh, levelRisiko: severity, idBaseline: r.baseline === "lansia" ? baseline?.id : undefined },

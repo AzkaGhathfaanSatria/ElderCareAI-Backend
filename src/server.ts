@@ -12,6 +12,13 @@ async function startServer() {
 
     console.log("PostgreSQL connected successfully");
 
+    if ((process.env.JWT_SECRET ?? "").length < 32) {
+      console.warn("PERINGATAN: JWT_SECRET kurang dari 32 karakter. Pakai string acak panjang sebelum dipakai di luar jaringan rumah.");
+    }
+    if (!process.env.CORS_ORIGINS) {
+      console.warn("PERINGATAN: CORS_ORIGINS belum diisi, semua asal diizinkan. Isi dengan alamat web kamu untuk produksi.");
+    }
+
     app.listen(PORT, () => {
       console.log(
         `ElderCareAI Backend running on http://localhost:${PORT}`

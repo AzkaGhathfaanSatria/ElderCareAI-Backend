@@ -11,14 +11,20 @@ import { pingAi } from "./integrations/aiClient";
 
 const app = express();
 
+// Di belakang proxy/Docker, req.ip harus alamat klien asli supaya pembatas login bekerja per pengguna.
+if (process.env.TRUST_PROXY) app.set("trust proxy", process.env.TRUST_PROXY === "true" ? true : process.env.TRUST_PROXY);
+
+// CORS_ORIGINS="https://app.contoh.id,http://localhost:3000" membatasi asal yang boleh memanggil API.
+// Tanpa variabel ini semua asal diizinkan (nyaman untuk LAN/pengembangan, jangan dipakai di publik).
+const corsOrigins = (process.env.CORS_ORIGINS ?? "").split(",").map((o) => o.trim()).filter(Boolean);
 app.use(
   cors({
-    origin: true,
+    origin: corsOrigins.length ? corsOrigins : true,
     credentials: true,
   })
 );
 
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
 
 app.get("/health", async (_req, res) => {
   const [database, ai] = await Promise.all([
