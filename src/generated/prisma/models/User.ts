@@ -243,7 +243,6 @@ export type UserWhereInput = {
   lansia?: Prisma.LansiaListRelationFilter
   notifikasi?: Prisma.NotificationListRelationFilter
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
-  auditLogs?: Prisma.AuditLogListRelationFilter
   resetTokens?: Prisma.PasswordResetTokenListRelationFilter
 }
 
@@ -259,7 +258,6 @@ export type UserOrderByWithRelationInput = {
   lansia?: Prisma.LansiaOrderByRelationAggregateInput
   notifikasi?: Prisma.NotificationOrderByRelationAggregateInput
   refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
-  auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
   resetTokens?: Prisma.PasswordResetTokenOrderByRelationAggregateInput
 }
 
@@ -278,7 +276,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   lansia?: Prisma.LansiaListRelationFilter
   notifikasi?: Prisma.NotificationListRelationFilter
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
-  auditLogs?: Prisma.AuditLogListRelationFilter
   resetTokens?: Prisma.PasswordResetTokenListRelationFilter
 }, "id" | "email">
 
@@ -323,7 +320,6 @@ export type UserCreateInput = {
   lansia?: Prisma.LansiaCreateNestedManyWithoutUserKeluargaInput
   notifikasi?: Prisma.NotificationCreateNestedManyWithoutPenerimaInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
 }
 
@@ -339,7 +335,6 @@ export type UserUncheckedCreateInput = {
   lansia?: Prisma.LansiaUncheckedCreateNestedManyWithoutUserKeluargaInput
   notifikasi?: Prisma.NotificationUncheckedCreateNestedManyWithoutPenerimaInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -354,7 +349,6 @@ export type UserUpdateInput = {
   lansia?: Prisma.LansiaUpdateManyWithoutUserKeluargaNestedInput
   notifikasi?: Prisma.NotificationUpdateManyWithoutPenerimaNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
 }
 
@@ -370,7 +364,6 @@ export type UserUncheckedUpdateInput = {
   lansia?: Prisma.LansiaUncheckedUpdateManyWithoutUserKeluargaNestedInput
   notifikasi?: Prisma.NotificationUncheckedUpdateManyWithoutPenerimaNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -450,11 +443,6 @@ export type UserSumOrderByAggregateInput = {
 export type UserScalarRelationFilter = {
   is?: Prisma.UserWhereInput
   isNot?: Prisma.UserWhereInput
-}
-
-export type UserNullableScalarRelationFilter = {
-  is?: Prisma.UserWhereInput | null
-  isNot?: Prisma.UserWhereInput | null
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -537,22 +525,6 @@ export type UserUpdateOneRequiredWithoutResetTokensNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutResetTokensInput, Prisma.UserUpdateWithoutResetTokensInput>, Prisma.UserUncheckedUpdateWithoutResetTokensInput>
 }
 
-export type UserCreateNestedOneWithoutAuditLogsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuditLogsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneWithoutAuditLogsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuditLogsInput
-  upsert?: Prisma.UserUpsertWithoutAuditLogsInput
-  disconnect?: Prisma.UserWhereInput | boolean
-  delete?: Prisma.UserWhereInput | boolean
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.UserUpdateWithoutAuditLogsInput>, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
-}
-
 export type UserCreateWithoutLansiaInput = {
   nama: string
   email: string
@@ -563,7 +535,6 @@ export type UserCreateWithoutLansiaInput = {
   createdAt?: Date | string
   notifikasi?: Prisma.NotificationCreateNestedManyWithoutPenerimaInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
 }
 
@@ -578,7 +549,6 @@ export type UserUncheckedCreateWithoutLansiaInput = {
   createdAt?: Date | string
   notifikasi?: Prisma.NotificationUncheckedCreateNestedManyWithoutPenerimaInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -608,7 +578,6 @@ export type UserUpdateWithoutLansiaInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   notifikasi?: Prisma.NotificationUpdateManyWithoutPenerimaNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
 }
 
@@ -623,7 +592,6 @@ export type UserUncheckedUpdateWithoutLansiaInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   notifikasi?: Prisma.NotificationUncheckedUpdateManyWithoutPenerimaNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -637,7 +605,6 @@ export type UserCreateWithoutNotifikasiInput = {
   createdAt?: Date | string
   lansia?: Prisma.LansiaCreateNestedManyWithoutUserKeluargaInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
 }
 
@@ -652,7 +619,6 @@ export type UserUncheckedCreateWithoutNotifikasiInput = {
   createdAt?: Date | string
   lansia?: Prisma.LansiaUncheckedCreateNestedManyWithoutUserKeluargaInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -682,7 +648,6 @@ export type UserUpdateWithoutNotifikasiInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lansia?: Prisma.LansiaUpdateManyWithoutUserKeluargaNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
 }
 
@@ -697,7 +662,6 @@ export type UserUncheckedUpdateWithoutNotifikasiInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lansia?: Prisma.LansiaUncheckedUpdateManyWithoutUserKeluargaNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -711,7 +675,6 @@ export type UserCreateWithoutRefreshTokensInput = {
   createdAt?: Date | string
   lansia?: Prisma.LansiaCreateNestedManyWithoutUserKeluargaInput
   notifikasi?: Prisma.NotificationCreateNestedManyWithoutPenerimaInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
 }
 
@@ -726,7 +689,6 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   createdAt?: Date | string
   lansia?: Prisma.LansiaUncheckedCreateNestedManyWithoutUserKeluargaInput
   notifikasi?: Prisma.NotificationUncheckedCreateNestedManyWithoutPenerimaInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -756,7 +718,6 @@ export type UserUpdateWithoutRefreshTokensInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lansia?: Prisma.LansiaUpdateManyWithoutUserKeluargaNestedInput
   notifikasi?: Prisma.NotificationUpdateManyWithoutPenerimaNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
 }
 
@@ -771,7 +732,6 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lansia?: Prisma.LansiaUncheckedUpdateManyWithoutUserKeluargaNestedInput
   notifikasi?: Prisma.NotificationUncheckedUpdateManyWithoutPenerimaNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -786,7 +746,6 @@ export type UserCreateWithoutResetTokensInput = {
   lansia?: Prisma.LansiaCreateNestedManyWithoutUserKeluargaInput
   notifikasi?: Prisma.NotificationCreateNestedManyWithoutPenerimaInput
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutResetTokensInput = {
@@ -801,7 +760,6 @@ export type UserUncheckedCreateWithoutResetTokensInput = {
   lansia?: Prisma.LansiaUncheckedCreateNestedManyWithoutUserKeluargaInput
   notifikasi?: Prisma.NotificationUncheckedCreateNestedManyWithoutPenerimaInput
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutResetTokensInput = {
@@ -831,7 +789,6 @@ export type UserUpdateWithoutResetTokensInput = {
   lansia?: Prisma.LansiaUpdateManyWithoutUserKeluargaNestedInput
   notifikasi?: Prisma.NotificationUpdateManyWithoutPenerimaNestedInput
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutResetTokensInput = {
@@ -846,81 +803,6 @@ export type UserUncheckedUpdateWithoutResetTokensInput = {
   lansia?: Prisma.LansiaUncheckedUpdateManyWithoutUserKeluargaNestedInput
   notifikasi?: Prisma.NotificationUncheckedUpdateManyWithoutPenerimaNestedInput
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserCreateWithoutAuditLogsInput = {
-  nama: string
-  email: string
-  password: string
-  role?: $Enums.Role
-  noTelepon?: string | null
-  status?: string
-  createdAt?: Date | string
-  lansia?: Prisma.LansiaCreateNestedManyWithoutUserKeluargaInput
-  notifikasi?: Prisma.NotificationCreateNestedManyWithoutPenerimaInput
-  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
-  resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutAuditLogsInput = {
-  id?: number
-  nama: string
-  email: string
-  password: string
-  role?: $Enums.Role
-  noTelepon?: string | null
-  status?: string
-  createdAt?: Date | string
-  lansia?: Prisma.LansiaUncheckedCreateNestedManyWithoutUserKeluargaInput
-  notifikasi?: Prisma.NotificationUncheckedCreateNestedManyWithoutPenerimaInput
-  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutAuditLogsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
-}
-
-export type UserUpsertWithoutAuditLogsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutAuditLogsInput, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutAuditLogsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutAuditLogsInput, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
-}
-
-export type UserUpdateWithoutAuditLogsInput = {
-  nama?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  noTelepon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lansia?: Prisma.LansiaUpdateManyWithoutUserKeluargaNestedInput
-  notifikasi?: Prisma.NotificationUpdateManyWithoutPenerimaNestedInput
-  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
-  resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutAuditLogsInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  nama?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  password?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  noTelepon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lansia?: Prisma.LansiaUncheckedUpdateManyWithoutUserKeluargaNestedInput
-  notifikasi?: Prisma.NotificationUncheckedUpdateManyWithoutPenerimaNestedInput
-  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -932,7 +814,6 @@ export type UserCountOutputType = {
   lansia: number
   notifikasi: number
   refreshTokens: number
-  auditLogs: number
   resetTokens: number
 }
 
@@ -940,7 +821,6 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   lansia?: boolean | UserCountOutputTypeCountLansiaArgs
   notifikasi?: boolean | UserCountOutputTypeCountNotifikasiArgs
   refreshTokens?: boolean | UserCountOutputTypeCountRefreshTokensArgs
-  auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
   resetTokens?: boolean | UserCountOutputTypeCountResetTokensArgs
 }
 
@@ -978,13 +858,6 @@ export type UserCountOutputTypeCountRefreshTokensArgs<ExtArgs extends runtime.Ty
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.AuditLogWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
 export type UserCountOutputTypeCountResetTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PasswordResetTokenWhereInput
 }
@@ -1002,7 +875,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   lansia?: boolean | Prisma.User$lansiaArgs<ExtArgs>
   notifikasi?: boolean | Prisma.User$notifikasiArgs<ExtArgs>
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
-  auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
   resetTokens?: boolean | Prisma.User$resetTokensArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -1045,7 +917,6 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   lansia?: boolean | Prisma.User$lansiaArgs<ExtArgs>
   notifikasi?: boolean | Prisma.User$notifikasiArgs<ExtArgs>
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
-  auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
   resetTokens?: boolean | Prisma.User$resetTokensArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1058,7 +929,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     lansia: Prisma.$LansiaPayload<ExtArgs>[]
     notifikasi: Prisma.$NotificationPayload<ExtArgs>[]
     refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
-    auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     resetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1467,7 +1337,6 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   lansia<T extends Prisma.User$lansiaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$lansiaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LansiaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifikasi<T extends Prisma.User$notifikasiArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notifikasiArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   refreshTokens<T extends Prisma.User$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  auditLogs<T extends Prisma.User$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   resetTokens<T extends Prisma.User$resetTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$resetTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1968,30 +1837,6 @@ export type User$refreshTokensArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.RefreshTokenScalarFieldEnum | Prisma.RefreshTokenScalarFieldEnum[]
-}
-
-/**
- * User.auditLogs
- */
-export type User$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the AuditLog
-   */
-  select?: Prisma.AuditLogSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the AuditLog
-   */
-  omit?: Prisma.AuditLogOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AuditLogInclude<ExtArgs> | null
-  where?: Prisma.AuditLogWhereInput
-  orderBy?: Prisma.AuditLogOrderByWithRelationInput | Prisma.AuditLogOrderByWithRelationInput[]
-  cursor?: Prisma.AuditLogWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
 }
 
 /**

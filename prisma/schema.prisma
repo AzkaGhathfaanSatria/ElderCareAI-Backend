@@ -61,7 +61,6 @@ model User {
   lansia        Lansia[]
   notifikasi    Notification[]
   refreshTokens RefreshToken[]
-  auditLogs     AuditLog[]
   resetTokens   PasswordResetToken[]
 
   @@map("tb_user")
@@ -84,7 +83,7 @@ model Lansia {
   alerts        Alert[]
   kejadianJatuh FallEvent[]
   izinAkses     AccessGrant[]
-  auditLogs     AuditLog[]
+  riwayatKondisi RiwayatKondisi[]
 
   @@map("tb_lansia")
 }
@@ -353,17 +352,31 @@ model PasswordResetToken {
   @@map("tb_reset_password_token")
 }
 
-model AuditLog {
-  id        BigInt   @id @default(autoincrement()) @map("id_audit")
-  idUser    Int?     @map("id_user")
-  idLansia  Int?     @map("id_lansia")
-  action    String   @db.VarChar(100)
-  details   Json?    @db.JsonB
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+/// Laporan kondisi lansia per periode (mis. tiap 15 menit), diisi pekerja berkala di backend.
+model RiwayatKondisi {
+  id             BigInt   @id @default(autoincrement()) @map("id_riwayat")
+  idLansia       Int      @map("id_lansia")
+  waktu          DateTime @db.Timestamptz(6)
+  periodeMenit   Int      @default(15) @map("periode_menit")
+  status         String   @db.VarChar(20)
+  dataJamAda     Boolean  @default(false) @map("data_jam_ada")
+  detakRata      Float?   @map("detak_rata")
+  detakMin       Int?     @map("detak_min")
+  detakMaks      Int?     @map("detak_maks")
+  spo2Rata       Float?   @map("spo2_rata")
+  suhuRata       Float?   @map("suhu_rata")
+  hrvRata        Float?   @map("hrv_rata")
+  skorRisiko     Float?   @map("skor_risiko")
+  levelRisiko    String?  @map("level_risiko") @db.VarChar(30)
+  deteksiKamera  Int      @default(0) @map("deteksi_kamera")
+  jatuhTerdeteksi Boolean @default(false) @map("jatuh_terdeteksi")
+  jumlahAlert    Int      @default(0) @map("jumlah_alert")
+  ringkasan      String?  @db.Text
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  user   User?   @relation(fields: [idUser], references: [id])
-  lansia Lansia? @relation(fields: [idLansia], references: [id])
+  lansia Lansia @relation(fields: [idLansia], references: [id], onDelete: Cascade)
 
-  @@index([createdAt(sort: Desc)])
-  @@map("tb_audit_log")
+  @@unique([idLansia, waktu])
+  @@index([idLansia, waktu(sort: Desc)])
+  @@map("tb_riwayat_kondisi")
 }

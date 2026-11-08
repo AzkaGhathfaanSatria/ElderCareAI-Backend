@@ -70,7 +70,7 @@ export const ModelName = {
   PushToken: 'PushToken',
   RefreshToken: 'RefreshToken',
   PasswordResetToken: 'PasswordResetToken',
-  AuditLog: 'AuditLog'
+  RiwayatKondisi: 'RiwayatKondisi'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -338,16 +338,29 @@ export const PasswordResetTokenScalarFieldEnum = {
 export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
-export const AuditLogScalarFieldEnum = {
+export const RiwayatKondisiScalarFieldEnum = {
   id: 'id',
-  idUser: 'idUser',
   idLansia: 'idLansia',
-  action: 'action',
-  details: 'details',
+  waktu: 'waktu',
+  periodeMenit: 'periodeMenit',
+  status: 'status',
+  dataJamAda: 'dataJamAda',
+  detakRata: 'detakRata',
+  detakMin: 'detakMin',
+  detakMaks: 'detakMaks',
+  spo2Rata: 'spo2Rata',
+  suhuRata: 'suhuRata',
+  hrvRata: 'hrvRata',
+  skorRisiko: 'skorRisiko',
+  levelRisiko: 'levelRisiko',
+  deteksiKamera: 'deteksiKamera',
+  jatuhTerdeteksi: 'jatuhTerdeteksi',
+  jumlahAlert: 'jumlahAlert',
+  ringkasan: 'ringkasan',
   createdAt: 'createdAt'
 } as const
 
-export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+export type RiwayatKondisiScalarFieldEnum = (typeof RiwayatKondisiScalarFieldEnum)[keyof typeof RiwayatKondisiScalarFieldEnum]
 
 
 export const SortOrder = {

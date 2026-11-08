@@ -237,7 +237,7 @@ export type LansiaWhereInput = {
   alerts?: Prisma.AlertListRelationFilter
   kejadianJatuh?: Prisma.FallEventListRelationFilter
   izinAkses?: Prisma.AccessGrantListRelationFilter
-  auditLogs?: Prisma.AuditLogListRelationFilter
+  riwayatKondisi?: Prisma.RiwayatKondisiListRelationFilter
 }
 
 export type LansiaOrderByWithRelationInput = {
@@ -256,7 +256,7 @@ export type LansiaOrderByWithRelationInput = {
   alerts?: Prisma.AlertOrderByRelationAggregateInput
   kejadianJatuh?: Prisma.FallEventOrderByRelationAggregateInput
   izinAkses?: Prisma.AccessGrantOrderByRelationAggregateInput
-  auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
+  riwayatKondisi?: Prisma.RiwayatKondisiOrderByRelationAggregateInput
 }
 
 export type LansiaWhereUniqueInput = Prisma.AtLeast<{
@@ -278,7 +278,7 @@ export type LansiaWhereUniqueInput = Prisma.AtLeast<{
   alerts?: Prisma.AlertListRelationFilter
   kejadianJatuh?: Prisma.FallEventListRelationFilter
   izinAkses?: Prisma.AccessGrantListRelationFilter
-  auditLogs?: Prisma.AuditLogListRelationFilter
+  riwayatKondisi?: Prisma.RiwayatKondisiListRelationFilter
 }, "id">
 
 export type LansiaOrderByWithAggregationInput = {
@@ -321,7 +321,7 @@ export type LansiaCreateInput = {
   alerts?: Prisma.AlertCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaUncheckedCreateInput = {
@@ -339,7 +339,7 @@ export type LansiaUncheckedCreateInput = {
   alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventUncheckedCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantUncheckedCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaUpdateInput = {
@@ -356,7 +356,7 @@ export type LansiaUpdateInput = {
   alerts?: Prisma.AlertUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaUncheckedUpdateInput = {
@@ -374,7 +374,7 @@ export type LansiaUncheckedUpdateInput = {
   alerts?: Prisma.AlertUncheckedUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUncheckedUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUncheckedUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaCreateManyInput = {
@@ -452,11 +452,6 @@ export type LansiaSumOrderByAggregateInput = {
 export type LansiaScalarRelationFilter = {
   is?: Prisma.LansiaWhereInput
   isNot?: Prisma.LansiaWhereInput
-}
-
-export type LansiaNullableScalarRelationFilter = {
-  is?: Prisma.LansiaWhereInput | null
-  isNot?: Prisma.LansiaWhereInput | null
 }
 
 export type LansiaCreateNestedManyWithoutUserKeluargaInput = {
@@ -613,20 +608,18 @@ export type LansiaUpdateOneRequiredWithoutIzinAksesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LansiaUpdateToOneWithWhereWithoutIzinAksesInput, Prisma.LansiaUpdateWithoutIzinAksesInput>, Prisma.LansiaUncheckedUpdateWithoutIzinAksesInput>
 }
 
-export type LansiaCreateNestedOneWithoutAuditLogsInput = {
-  create?: Prisma.XOR<Prisma.LansiaCreateWithoutAuditLogsInput, Prisma.LansiaUncheckedCreateWithoutAuditLogsInput>
-  connectOrCreate?: Prisma.LansiaCreateOrConnectWithoutAuditLogsInput
+export type LansiaCreateNestedOneWithoutRiwayatKondisiInput = {
+  create?: Prisma.XOR<Prisma.LansiaCreateWithoutRiwayatKondisiInput, Prisma.LansiaUncheckedCreateWithoutRiwayatKondisiInput>
+  connectOrCreate?: Prisma.LansiaCreateOrConnectWithoutRiwayatKondisiInput
   connect?: Prisma.LansiaWhereUniqueInput
 }
 
-export type LansiaUpdateOneWithoutAuditLogsNestedInput = {
-  create?: Prisma.XOR<Prisma.LansiaCreateWithoutAuditLogsInput, Prisma.LansiaUncheckedCreateWithoutAuditLogsInput>
-  connectOrCreate?: Prisma.LansiaCreateOrConnectWithoutAuditLogsInput
-  upsert?: Prisma.LansiaUpsertWithoutAuditLogsInput
-  disconnect?: Prisma.LansiaWhereInput | boolean
-  delete?: Prisma.LansiaWhereInput | boolean
+export type LansiaUpdateOneRequiredWithoutRiwayatKondisiNestedInput = {
+  create?: Prisma.XOR<Prisma.LansiaCreateWithoutRiwayatKondisiInput, Prisma.LansiaUncheckedCreateWithoutRiwayatKondisiInput>
+  connectOrCreate?: Prisma.LansiaCreateOrConnectWithoutRiwayatKondisiInput
+  upsert?: Prisma.LansiaUpsertWithoutRiwayatKondisiInput
   connect?: Prisma.LansiaWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.LansiaUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.LansiaUpdateWithoutAuditLogsInput>, Prisma.LansiaUncheckedUpdateWithoutAuditLogsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LansiaUpdateToOneWithWhereWithoutRiwayatKondisiInput, Prisma.LansiaUpdateWithoutRiwayatKondisiInput>, Prisma.LansiaUncheckedUpdateWithoutRiwayatKondisiInput>
 }
 
 export type LansiaCreateWithoutUserKeluargaInput = {
@@ -642,7 +635,7 @@ export type LansiaCreateWithoutUserKeluargaInput = {
   alerts?: Prisma.AlertCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaUncheckedCreateWithoutUserKeluargaInput = {
@@ -659,7 +652,7 @@ export type LansiaUncheckedCreateWithoutUserKeluargaInput = {
   alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventUncheckedCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantUncheckedCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaCreateOrConnectWithoutUserKeluargaInput = {
@@ -713,7 +706,7 @@ export type LansiaCreateWithoutWearablesInput = {
   alerts?: Prisma.AlertCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaUncheckedCreateWithoutWearablesInput = {
@@ -730,7 +723,7 @@ export type LansiaUncheckedCreateWithoutWearablesInput = {
   alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventUncheckedCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantUncheckedCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaCreateOrConnectWithoutWearablesInput = {
@@ -762,7 +755,7 @@ export type LansiaUpdateWithoutWearablesInput = {
   alerts?: Prisma.AlertUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaUncheckedUpdateWithoutWearablesInput = {
@@ -779,7 +772,7 @@ export type LansiaUncheckedUpdateWithoutWearablesInput = {
   alerts?: Prisma.AlertUncheckedUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUncheckedUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUncheckedUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaCreateWithoutSensorIotInput = {
@@ -795,7 +788,7 @@ export type LansiaCreateWithoutSensorIotInput = {
   alerts?: Prisma.AlertCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaUncheckedCreateWithoutSensorIotInput = {
@@ -812,7 +805,7 @@ export type LansiaUncheckedCreateWithoutSensorIotInput = {
   alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventUncheckedCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantUncheckedCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaCreateOrConnectWithoutSensorIotInput = {
@@ -844,7 +837,7 @@ export type LansiaUpdateWithoutSensorIotInput = {
   alerts?: Prisma.AlertUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaUncheckedUpdateWithoutSensorIotInput = {
@@ -861,7 +854,7 @@ export type LansiaUncheckedUpdateWithoutSensorIotInput = {
   alerts?: Prisma.AlertUncheckedUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUncheckedUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUncheckedUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaCreateWithoutBaselinesInput = {
@@ -877,7 +870,7 @@ export type LansiaCreateWithoutBaselinesInput = {
   alerts?: Prisma.AlertCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaUncheckedCreateWithoutBaselinesInput = {
@@ -894,7 +887,7 @@ export type LansiaUncheckedCreateWithoutBaselinesInput = {
   alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventUncheckedCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantUncheckedCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaCreateOrConnectWithoutBaselinesInput = {
@@ -926,7 +919,7 @@ export type LansiaUpdateWithoutBaselinesInput = {
   alerts?: Prisma.AlertUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaUncheckedUpdateWithoutBaselinesInput = {
@@ -943,7 +936,7 @@ export type LansiaUncheckedUpdateWithoutBaselinesInput = {
   alerts?: Prisma.AlertUncheckedUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUncheckedUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUncheckedUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaCreateWithoutPredictionsInput = {
@@ -959,7 +952,7 @@ export type LansiaCreateWithoutPredictionsInput = {
   alerts?: Prisma.AlertCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaUncheckedCreateWithoutPredictionsInput = {
@@ -976,7 +969,7 @@ export type LansiaUncheckedCreateWithoutPredictionsInput = {
   alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventUncheckedCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantUncheckedCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaCreateOrConnectWithoutPredictionsInput = {
@@ -1008,7 +1001,7 @@ export type LansiaUpdateWithoutPredictionsInput = {
   alerts?: Prisma.AlertUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaUncheckedUpdateWithoutPredictionsInput = {
@@ -1025,7 +1018,7 @@ export type LansiaUncheckedUpdateWithoutPredictionsInput = {
   alerts?: Prisma.AlertUncheckedUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUncheckedUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUncheckedUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaCreateWithoutKameraInput = {
@@ -1041,7 +1034,7 @@ export type LansiaCreateWithoutKameraInput = {
   alerts?: Prisma.AlertCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaUncheckedCreateWithoutKameraInput = {
@@ -1058,7 +1051,7 @@ export type LansiaUncheckedCreateWithoutKameraInput = {
   alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventUncheckedCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantUncheckedCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaCreateOrConnectWithoutKameraInput = {
@@ -1090,7 +1083,7 @@ export type LansiaUpdateWithoutKameraInput = {
   alerts?: Prisma.AlertUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaUncheckedUpdateWithoutKameraInput = {
@@ -1107,7 +1100,7 @@ export type LansiaUncheckedUpdateWithoutKameraInput = {
   alerts?: Prisma.AlertUncheckedUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUncheckedUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUncheckedUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaCreateWithoutKejadianJatuhInput = {
@@ -1123,7 +1116,7 @@ export type LansiaCreateWithoutKejadianJatuhInput = {
   predictions?: Prisma.RiskPredictionCreateNestedManyWithoutLansiaInput
   alerts?: Prisma.AlertCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaUncheckedCreateWithoutKejadianJatuhInput = {
@@ -1140,7 +1133,7 @@ export type LansiaUncheckedCreateWithoutKejadianJatuhInput = {
   predictions?: Prisma.RiskPredictionUncheckedCreateNestedManyWithoutLansiaInput
   alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantUncheckedCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaCreateOrConnectWithoutKejadianJatuhInput = {
@@ -1172,7 +1165,7 @@ export type LansiaUpdateWithoutKejadianJatuhInput = {
   predictions?: Prisma.RiskPredictionUpdateManyWithoutLansiaNestedInput
   alerts?: Prisma.AlertUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaUncheckedUpdateWithoutKejadianJatuhInput = {
@@ -1189,7 +1182,7 @@ export type LansiaUncheckedUpdateWithoutKejadianJatuhInput = {
   predictions?: Prisma.RiskPredictionUncheckedUpdateManyWithoutLansiaNestedInput
   alerts?: Prisma.AlertUncheckedUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUncheckedUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaCreateWithoutAlertsInput = {
@@ -1205,7 +1198,7 @@ export type LansiaCreateWithoutAlertsInput = {
   predictions?: Prisma.RiskPredictionCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaUncheckedCreateWithoutAlertsInput = {
@@ -1222,7 +1215,7 @@ export type LansiaUncheckedCreateWithoutAlertsInput = {
   predictions?: Prisma.RiskPredictionUncheckedCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventUncheckedCreateNestedManyWithoutLansiaInput
   izinAkses?: Prisma.AccessGrantUncheckedCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaCreateOrConnectWithoutAlertsInput = {
@@ -1254,7 +1247,7 @@ export type LansiaUpdateWithoutAlertsInput = {
   predictions?: Prisma.RiskPredictionUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaUncheckedUpdateWithoutAlertsInput = {
@@ -1271,7 +1264,7 @@ export type LansiaUncheckedUpdateWithoutAlertsInput = {
   predictions?: Prisma.RiskPredictionUncheckedUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUncheckedUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUncheckedUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaCreateWithoutIzinAksesInput = {
@@ -1287,7 +1280,7 @@ export type LansiaCreateWithoutIzinAksesInput = {
   predictions?: Prisma.RiskPredictionCreateNestedManyWithoutLansiaInput
   alerts?: Prisma.AlertCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaUncheckedCreateWithoutIzinAksesInput = {
@@ -1304,7 +1297,7 @@ export type LansiaUncheckedCreateWithoutIzinAksesInput = {
   predictions?: Prisma.RiskPredictionUncheckedCreateNestedManyWithoutLansiaInput
   alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutLansiaInput
   kejadianJatuh?: Prisma.FallEventUncheckedCreateNestedManyWithoutLansiaInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutLansiaInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedCreateNestedManyWithoutLansiaInput
 }
 
 export type LansiaCreateOrConnectWithoutIzinAksesInput = {
@@ -1336,7 +1329,7 @@ export type LansiaUpdateWithoutIzinAksesInput = {
   predictions?: Prisma.RiskPredictionUpdateManyWithoutLansiaNestedInput
   alerts?: Prisma.AlertUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaUncheckedUpdateWithoutIzinAksesInput = {
@@ -1353,10 +1346,10 @@ export type LansiaUncheckedUpdateWithoutIzinAksesInput = {
   predictions?: Prisma.RiskPredictionUncheckedUpdateManyWithoutLansiaNestedInput
   alerts?: Prisma.AlertUncheckedUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUncheckedUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedUpdateManyWithoutLansiaNestedInput
 }
 
-export type LansiaCreateWithoutAuditLogsInput = {
+export type LansiaCreateWithoutRiwayatKondisiInput = {
   nama: string
   tanggalLahir: Date | string
   alamat: string
@@ -1372,7 +1365,7 @@ export type LansiaCreateWithoutAuditLogsInput = {
   izinAkses?: Prisma.AccessGrantCreateNestedManyWithoutLansiaInput
 }
 
-export type LansiaUncheckedCreateWithoutAuditLogsInput = {
+export type LansiaUncheckedCreateWithoutRiwayatKondisiInput = {
   id?: number
   idUserKeluarga: number
   nama: string
@@ -1389,23 +1382,23 @@ export type LansiaUncheckedCreateWithoutAuditLogsInput = {
   izinAkses?: Prisma.AccessGrantUncheckedCreateNestedManyWithoutLansiaInput
 }
 
-export type LansiaCreateOrConnectWithoutAuditLogsInput = {
+export type LansiaCreateOrConnectWithoutRiwayatKondisiInput = {
   where: Prisma.LansiaWhereUniqueInput
-  create: Prisma.XOR<Prisma.LansiaCreateWithoutAuditLogsInput, Prisma.LansiaUncheckedCreateWithoutAuditLogsInput>
+  create: Prisma.XOR<Prisma.LansiaCreateWithoutRiwayatKondisiInput, Prisma.LansiaUncheckedCreateWithoutRiwayatKondisiInput>
 }
 
-export type LansiaUpsertWithoutAuditLogsInput = {
-  update: Prisma.XOR<Prisma.LansiaUpdateWithoutAuditLogsInput, Prisma.LansiaUncheckedUpdateWithoutAuditLogsInput>
-  create: Prisma.XOR<Prisma.LansiaCreateWithoutAuditLogsInput, Prisma.LansiaUncheckedCreateWithoutAuditLogsInput>
+export type LansiaUpsertWithoutRiwayatKondisiInput = {
+  update: Prisma.XOR<Prisma.LansiaUpdateWithoutRiwayatKondisiInput, Prisma.LansiaUncheckedUpdateWithoutRiwayatKondisiInput>
+  create: Prisma.XOR<Prisma.LansiaCreateWithoutRiwayatKondisiInput, Prisma.LansiaUncheckedCreateWithoutRiwayatKondisiInput>
   where?: Prisma.LansiaWhereInput
 }
 
-export type LansiaUpdateToOneWithWhereWithoutAuditLogsInput = {
+export type LansiaUpdateToOneWithWhereWithoutRiwayatKondisiInput = {
   where?: Prisma.LansiaWhereInput
-  data: Prisma.XOR<Prisma.LansiaUpdateWithoutAuditLogsInput, Prisma.LansiaUncheckedUpdateWithoutAuditLogsInput>
+  data: Prisma.XOR<Prisma.LansiaUpdateWithoutRiwayatKondisiInput, Prisma.LansiaUncheckedUpdateWithoutRiwayatKondisiInput>
 }
 
-export type LansiaUpdateWithoutAuditLogsInput = {
+export type LansiaUpdateWithoutRiwayatKondisiInput = {
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   tanggalLahir?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   alamat?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1421,7 +1414,7 @@ export type LansiaUpdateWithoutAuditLogsInput = {
   izinAkses?: Prisma.AccessGrantUpdateManyWithoutLansiaNestedInput
 }
 
-export type LansiaUncheckedUpdateWithoutAuditLogsInput = {
+export type LansiaUncheckedUpdateWithoutRiwayatKondisiInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   idUserKeluarga?: Prisma.IntFieldUpdateOperationsInput | number
   nama?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1459,7 +1452,7 @@ export type LansiaUpdateWithoutUserKeluargaInput = {
   alerts?: Prisma.AlertUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaUncheckedUpdateWithoutUserKeluargaInput = {
@@ -1476,7 +1469,7 @@ export type LansiaUncheckedUpdateWithoutUserKeluargaInput = {
   alerts?: Prisma.AlertUncheckedUpdateManyWithoutLansiaNestedInput
   kejadianJatuh?: Prisma.FallEventUncheckedUpdateManyWithoutLansiaNestedInput
   izinAkses?: Prisma.AccessGrantUncheckedUpdateManyWithoutLansiaNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutLansiaNestedInput
+  riwayatKondisi?: Prisma.RiwayatKondisiUncheckedUpdateManyWithoutLansiaNestedInput
 }
 
 export type LansiaUncheckedUpdateManyWithoutUserKeluargaInput = {
@@ -1501,7 +1494,7 @@ export type LansiaCountOutputType = {
   alerts: number
   kejadianJatuh: number
   izinAkses: number
-  auditLogs: number
+  riwayatKondisi: number
 }
 
 export type LansiaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1513,7 +1506,7 @@ export type LansiaCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   alerts?: boolean | LansiaCountOutputTypeCountAlertsArgs
   kejadianJatuh?: boolean | LansiaCountOutputTypeCountKejadianJatuhArgs
   izinAkses?: boolean | LansiaCountOutputTypeCountIzinAksesArgs
-  auditLogs?: boolean | LansiaCountOutputTypeCountAuditLogsArgs
+  riwayatKondisi?: boolean | LansiaCountOutputTypeCountRiwayatKondisiArgs
 }
 
 /**
@@ -1585,8 +1578,8 @@ export type LansiaCountOutputTypeCountIzinAksesArgs<ExtArgs extends runtime.Type
 /**
  * LansiaCountOutputType without action
  */
-export type LansiaCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.AuditLogWhereInput
+export type LansiaCountOutputTypeCountRiwayatKondisiArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RiwayatKondisiWhereInput
 }
 
 
@@ -1606,7 +1599,7 @@ export type LansiaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   alerts?: boolean | Prisma.Lansia$alertsArgs<ExtArgs>
   kejadianJatuh?: boolean | Prisma.Lansia$kejadianJatuhArgs<ExtArgs>
   izinAkses?: boolean | Prisma.Lansia$izinAksesArgs<ExtArgs>
-  auditLogs?: boolean | Prisma.Lansia$auditLogsArgs<ExtArgs>
+  riwayatKondisi?: boolean | Prisma.Lansia$riwayatKondisiArgs<ExtArgs>
   _count?: boolean | Prisma.LansiaCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["lansia"]>
 
@@ -1650,7 +1643,7 @@ export type LansiaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   alerts?: boolean | Prisma.Lansia$alertsArgs<ExtArgs>
   kejadianJatuh?: boolean | Prisma.Lansia$kejadianJatuhArgs<ExtArgs>
   izinAkses?: boolean | Prisma.Lansia$izinAksesArgs<ExtArgs>
-  auditLogs?: boolean | Prisma.Lansia$auditLogsArgs<ExtArgs>
+  riwayatKondisi?: boolean | Prisma.Lansia$riwayatKondisiArgs<ExtArgs>
   _count?: boolean | Prisma.LansiaCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LansiaIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1672,7 +1665,7 @@ export type $LansiaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     alerts: Prisma.$AlertPayload<ExtArgs>[]
     kejadianJatuh: Prisma.$FallEventPayload<ExtArgs>[]
     izinAkses: Prisma.$AccessGrantPayload<ExtArgs>[]
-    auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+    riwayatKondisi: Prisma.$RiwayatKondisiPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -2084,7 +2077,7 @@ export interface Prisma__LansiaClient<T, Null = never, ExtArgs extends runtime.T
   alerts<T extends Prisma.Lansia$alertsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lansia$alertsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AlertPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kejadianJatuh<T extends Prisma.Lansia$kejadianJatuhArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lansia$kejadianJatuhArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FallEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   izinAkses<T extends Prisma.Lansia$izinAksesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lansia$izinAksesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccessGrantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  auditLogs<T extends Prisma.Lansia$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lansia$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  riwayatKondisi<T extends Prisma.Lansia$riwayatKondisiArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lansia$riwayatKondisiArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RiwayatKondisiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2713,27 +2706,27 @@ export type Lansia$izinAksesArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
- * Lansia.auditLogs
+ * Lansia.riwayatKondisi
  */
-export type Lansia$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Lansia$riwayatKondisiArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the AuditLog
+   * Select specific fields to fetch from the RiwayatKondisi
    */
-  select?: Prisma.AuditLogSelect<ExtArgs> | null
+  select?: Prisma.RiwayatKondisiSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the AuditLog
+   * Omit specific fields from the RiwayatKondisi
    */
-  omit?: Prisma.AuditLogOmit<ExtArgs> | null
+  omit?: Prisma.RiwayatKondisiOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.AuditLogInclude<ExtArgs> | null
-  where?: Prisma.AuditLogWhereInput
-  orderBy?: Prisma.AuditLogOrderByWithRelationInput | Prisma.AuditLogOrderByWithRelationInput[]
-  cursor?: Prisma.AuditLogWhereUniqueInput
+  include?: Prisma.RiwayatKondisiInclude<ExtArgs> | null
+  where?: Prisma.RiwayatKondisiWhereInput
+  orderBy?: Prisma.RiwayatKondisiOrderByWithRelationInput | Prisma.RiwayatKondisiOrderByWithRelationInput[]
+  cursor?: Prisma.RiwayatKondisiWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
+  distinct?: Prisma.RiwayatKondisiScalarFieldEnum | Prisma.RiwayatKondisiScalarFieldEnum[]
 }
 
 /**

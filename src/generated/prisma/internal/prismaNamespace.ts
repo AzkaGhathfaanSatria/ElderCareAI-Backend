@@ -416,7 +416,7 @@ export const ModelName = {
   PushToken: 'PushToken',
   RefreshToken: 'RefreshToken',
   PasswordResetToken: 'PasswordResetToken',
-  AuditLog: 'AuditLog'
+  RiwayatKondisi: 'RiwayatKondisi'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -432,7 +432,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "lansia" | "wearable" | "sensorIot" | "vitalSign" | "activity" | "wearableData" | "baseline" | "riskPrediction" | "camera" | "yoloDetection" | "fallEvent" | "alert" | "notification" | "accessGrant" | "notificationPreference" | "pushToken" | "refreshToken" | "passwordResetToken" | "auditLog"
+    modelProps: "user" | "lansia" | "wearable" | "sensorIot" | "vitalSign" | "activity" | "wearableData" | "baseline" | "riskPrediction" | "camera" | "yoloDetection" | "fallEvent" | "alert" | "notification" | "accessGrant" | "notificationPreference" | "pushToken" | "refreshToken" | "passwordResetToken" | "riwayatKondisi"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1842,77 +1842,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    AuditLog: {
-      payload: Prisma.$AuditLogPayload<ExtArgs>
-      fields: Prisma.AuditLogFieldRefs
+    RiwayatKondisi: {
+      payload: Prisma.$RiwayatKondisiPayload<ExtArgs>
+      fields: Prisma.RiwayatKondisiFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.AuditLogFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload> | null
+          args: Prisma.RiwayatKondisiFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiwayatKondisiPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.AuditLogFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          args: Prisma.RiwayatKondisiFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiwayatKondisiPayload>
         }
         findFirst: {
-          args: Prisma.AuditLogFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload> | null
+          args: Prisma.RiwayatKondisiFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiwayatKondisiPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.AuditLogFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          args: Prisma.RiwayatKondisiFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiwayatKondisiPayload>
         }
         findMany: {
-          args: Prisma.AuditLogFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+          args: Prisma.RiwayatKondisiFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiwayatKondisiPayload>[]
         }
         create: {
-          args: Prisma.AuditLogCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          args: Prisma.RiwayatKondisiCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiwayatKondisiPayload>
         }
         createMany: {
-          args: Prisma.AuditLogCreateManyArgs<ExtArgs>
+          args: Prisma.RiwayatKondisiCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.AuditLogCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+          args: Prisma.RiwayatKondisiCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiwayatKondisiPayload>[]
         }
         delete: {
-          args: Prisma.AuditLogDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          args: Prisma.RiwayatKondisiDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiwayatKondisiPayload>
         }
         update: {
-          args: Prisma.AuditLogUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          args: Prisma.RiwayatKondisiUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiwayatKondisiPayload>
         }
         deleteMany: {
-          args: Prisma.AuditLogDeleteManyArgs<ExtArgs>
+          args: Prisma.RiwayatKondisiDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.AuditLogUpdateManyArgs<ExtArgs>
+          args: Prisma.RiwayatKondisiUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.AuditLogUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+          args: Prisma.RiwayatKondisiUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiwayatKondisiPayload>[]
         }
         upsert: {
-          args: Prisma.AuditLogUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+          args: Prisma.RiwayatKondisiUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RiwayatKondisiPayload>
         }
         aggregate: {
-          args: Prisma.AuditLogAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateAuditLog>
+          args: Prisma.RiwayatKondisiAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRiwayatKondisi>
         }
         groupBy: {
-          args: Prisma.AuditLogGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AuditLogGroupByOutputType>[]
+          args: Prisma.RiwayatKondisiGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RiwayatKondisiGroupByOutputType>[]
         }
         count: {
-          args: Prisma.AuditLogCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AuditLogCountAggregateOutputType> | number
+          args: Prisma.RiwayatKondisiCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RiwayatKondisiCountAggregateOutputType> | number
         }
       }
     }
@@ -2204,16 +2204,29 @@ export const PasswordResetTokenScalarFieldEnum = {
 export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
-export const AuditLogScalarFieldEnum = {
+export const RiwayatKondisiScalarFieldEnum = {
   id: 'id',
-  idUser: 'idUser',
   idLansia: 'idLansia',
-  action: 'action',
-  details: 'details',
+  waktu: 'waktu',
+  periodeMenit: 'periodeMenit',
+  status: 'status',
+  dataJamAda: 'dataJamAda',
+  detakRata: 'detakRata',
+  detakMin: 'detakMin',
+  detakMaks: 'detakMaks',
+  spo2Rata: 'spo2Rata',
+  suhuRata: 'suhuRata',
+  hrvRata: 'hrvRata',
+  skorRisiko: 'skorRisiko',
+  levelRisiko: 'levelRisiko',
+  deteksiKamera: 'deteksiKamera',
+  jatuhTerdeteksi: 'jatuhTerdeteksi',
+  jumlahAlert: 'jumlahAlert',
+  ringkasan: 'ringkasan',
   createdAt: 'createdAt'
 } as const
 
-export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+export type RiwayatKondisiScalarFieldEnum = (typeof RiwayatKondisiScalarFieldEnum)[keyof typeof RiwayatKondisiScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2628,7 +2641,7 @@ export type GlobalOmitConfig = {
   pushToken?: Prisma.PushTokenOmit
   refreshToken?: Prisma.RefreshTokenOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit
-  auditLog?: Prisma.AuditLogOmit
+  riwayatKondisi?: Prisma.RiwayatKondisiOmit
 }
 
 /* Types for Logging */

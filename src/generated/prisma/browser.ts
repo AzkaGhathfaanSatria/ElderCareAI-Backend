@@ -113,7 +113,7 @@ export type RefreshToken = Prisma.RefreshTokenModel
  */
 export type PasswordResetToken = Prisma.PasswordResetTokenModel
 /**
- * Model AuditLog
- * 
+ * Model RiwayatKondisi
+ * Laporan kondisi lansia per periode (mis. tiap 15 menit), diisi pekerja berkala di backend.
  */
-export type AuditLog = Prisma.AuditLogModel
+export type RiwayatKondisi = Prisma.RiwayatKondisiModel
