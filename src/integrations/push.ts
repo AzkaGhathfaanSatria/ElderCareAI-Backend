@@ -73,8 +73,9 @@ export interface PushPayload {
 }
 
 type SendResult = "ok" | "invalid" | "error";
+type SendOutcome = { result: SendResult; detail?: string };
 
-async function sendOne(a: ServiceAccount, accessToken: string, deviceToken: string, p: PushPayload): Promise<SendResult> {
+async function sendOne(a: ServiceAccount, accessToken: string, deviceToken: string, p: PushPayload): Promise<SendOutcome> {
   try {
     const res = await fetch(`https://fcm.googleapis.com/v1/projects/${a.project_id}/messages:send`, {
       method: "POST",
@@ -90,17 +91,17 @@ async function sendOne(a: ServiceAccount, accessToken: string, deviceToken: stri
       }),
       signal: AbortSignal.timeout(10_000),
     });
-    if (res.ok) return "ok";
+    if (res.ok) return { result: "ok" };
     const text = await res.text();
     // Token sudah tidak berlaku (aplikasi dihapus / token rusak): hapus dari database.
     if (res.status === 404 || text.includes("UNREGISTERED") || (res.status === 400 && /message\.token|registration token/i.test(text))) {
-      return "invalid";
+      return { result: "invalid", detail: "token tidak berlaku" };
     }
     console.error(`[push] FCM ${res.status}: ${text.slice(0, 300)}`);
-    return "error";
+    return { result: "error", detail: `FCM ${res.status}` };
   } catch (e) {
     console.error("[push] gagal mengirim:", (e as Error).message);
-    return "error";
+    return { result: "error", detail: (e as Error).message.slice(0, 200) };
   }
 }
 
@@ -118,8 +119,8 @@ export async function sendPushToUsers(userIds: number[], payload: PushPayload) {
     const outcomes = await Promise.all(tokens.map((t) => sendOne(a, accessToken, t.token, payload)));
     const dead: string[] = [];
     outcomes.forEach((o, i) => {
-      if (o === "ok") result.sent++;
-      else if (o === "invalid") dead.push(tokens[i]!.token);
+      if (o.result === "ok") result.sent++;
+      else if (o.result === "invalid") dead.push(tokens[i]!.token);
       else result.failed++;
     });
     if (dead.length) {
@@ -131,4 +132,54 @@ export async function sendPushToUsers(userIds: number[], payload: PushPayload) {
     result.failed = result.tokens - result.sent;
   }
   return result;
+}
+
+export interface PushDelivery {
+  enabled: boolean;
+  tokens: number;
+  ok: number;
+  invalid: number;
+  error: number;
+  removed: number;
+  /** Keterangan kegagalan sementara terakhir (untuk kolom error_pesan). */
+  detail?: string;
+}
+
+/**
+ * Kirim ke semua perangkat satu user dan laporkan hasilnya per kategori.
+ * `error` = kegagalan sementara (layak diulang), `invalid` = token mati (dihapus, tidak diulang).
+ * Tidak pernah melempar error: kegagalan dilaporkan lewat hasil.
+ */
+export async function sendPushToUser(idUser: number, payload: PushPayload): Promise<PushDelivery> {
+  const out: PushDelivery = { enabled: pushEnabled(), tokens: 0, ok: 0, invalid: 0, error: 0, removed: 0 };
+  const a = loadAccount();
+  if (!a) return out;
+  try {
+    const tokens = await prisma.pushToken.findMany({ where: { idUser }, select: { token: true } });
+    out.tokens = tokens.length;
+    if (tokens.length === 0) return out;
+
+    const accessToken = await getAccessToken(a);
+    const outcomes = await Promise.all(tokens.map((t) => sendOne(a, accessToken, t.token, payload)));
+    const dead: string[] = [];
+    outcomes.forEach((o, i) => {
+      if (o.result === "ok") out.ok++;
+      else if (o.result === "invalid") {
+        out.invalid++;
+        dead.push(tokens[i]!.token);
+      } else {
+        out.error++;
+        out.detail = o.detail;
+      }
+    });
+    if (dead.length) {
+      const del = await prisma.pushToken.deleteMany({ where: { token: { in: dead } } });
+      out.removed = del.count;
+    }
+  } catch (e) {
+    console.error("[push] sendPushToUser:", (e as Error).message);
+    out.error = Math.max(out.tokens - out.ok - out.invalid, 1);
+    out.detail = (e as Error).message.slice(0, 200);
+  }
+  return out;
 }

@@ -4,11 +4,11 @@ import jwt from "jsonwebtoken";
 import prisma from "../../lib/prisma";
 import { sendMail } from "../../integrations/mailer";
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  throw new Error("JWT_SECRET belum diset di .env");
-}
+const JWT_SECRET: string = (() => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new Error("JWT_SECRET belum diset di .env");
+  return secret;
+})();
 
 function generateRefreshToken() {
   return crypto.randomBytes(64).toString("hex");

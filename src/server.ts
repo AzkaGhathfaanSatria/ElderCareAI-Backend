@@ -2,6 +2,8 @@ import "dotenv/config";
 import app from "./app";
 import prisma from "./lib/prisma";
 import { startBaselineScheduler } from "./modules/baseline/baseline.service";
+import { startNotificationOutbox } from "./modules/notifications/outbox";
+import { startRiwayatScheduler } from "./modules/history/riwayat.service";
 import { resumeEnabledCameras } from "./modules/camera/camera.worker";
 
 const PORT = process.env.PORT || 4000;
@@ -27,6 +29,8 @@ async function startServer() {
     });
 
     startBaselineScheduler();
+    startRiwayatScheduler();
+    startNotificationOutbox();
   } catch (error) {
     console.error("Database connection failed:", error);
     process.exit(1);

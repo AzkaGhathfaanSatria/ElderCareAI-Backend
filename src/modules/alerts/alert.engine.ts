@@ -1,8 +1,8 @@
 import prisma from "../../lib/prisma";
 import { publish } from "../../common/events";
 import { inferSensor } from "../../integrations/aiClient";
-import { sendPushToUsers } from "../../integrations/push";
 import { latestBaseline } from "../baseline/baseline.service";
+import { kickOutbox } from "../notifications/outbox";
 
 // Ambang bisa diubah lewat env tanpa menyentuh kode.
 const HR_HIGH = Number(process.env.ALERT_HR_HIGH ?? 120);
@@ -46,18 +46,31 @@ export async function evaluateWearable(idWearable: number, idLansia: number) {
   return raiseAlert({ idLansia, jenis, severity, dedupKey });
 }
 
-/** Buat alert (dedup + cooldown lewat dedupKey unik), kirim notifikasi, lalu dorong event realtime. */
+/**
+ * Buat alert (dedup + cooldown lewat dedupKey unik) beserta SEMUA baris notifikasi `pending` dalam satu transaksi,
+ * lalu picu pengirim (outbox) dan dorong event realtime. Bila dedupKey sudah ada, transaksi dibatalkan dan hasilnya null.
+ */
 async function raiseAlert(a: { idLansia: number; jenis: string; severity: Level; dedupKey: string; idPrediksi?: bigint; idJatuh?: bigint; idBaseline?: number; fall?: boolean }) {
+  const recipients = await planRecipients(a.idLansia, a.severity);
+
   let alert;
   try {
-    alert = await prisma.alert.create({
-      data: { idLansia: a.idLansia, jenisAnomali: a.jenis, tingkatKeparahan: a.severity, dedupKey: a.dedupKey, idPrediksi: a.idPrediksi, idJatuh: a.idJatuh, idBaseline: a.idBaseline },
+    alert = await prisma.$transaction(async (tx) => {
+      const created = await tx.alert.create({
+        data: { idLansia: a.idLansia, jenisAnomali: a.jenis, tingkatKeparahan: a.severity, dedupKey: a.dedupKey, idPrediksi: a.idPrediksi, idJatuh: a.idJatuh, idBaseline: a.idBaseline },
+      });
+      const rows = recipients.flatMap((r) => [
+        ...(r.dashboard ? [{ idAlert: created.id, idUserPenerima: r.userId, channel: "dashboard" as const, status: "pending" as const }] : []),
+        ...(r.push ? [{ idAlert: created.id, idUserPenerima: r.userId, channel: "push" as const, status: "pending" as const }] : []),
+      ]);
+      if (rows.length) await tx.notification.createMany({ data: rows });
+      return created;
     });
   } catch (e: any) {
     if (e?.code === "P2002") return null; // sudah ada alert yang sama dalam cooldown
     throw e;
   }
-  await notifyRecipients(alert.id, a.idLansia, a.severity, a.jenis);
+  kickOutbox();
   publish(a.idLansia, "alert", { id: String(alert.id), type: a.jenis, level: a.severity });
   if (a.fall) publish(a.idLansia, "fall", { id: String(alert.id) });
   return alert;
@@ -155,13 +168,20 @@ export async function raiseFall(a: { idLansia: number; jenis: string; idDeteksi?
   });
 }
 
+export interface Recipient {
+  userId: number;
+  dashboard: boolean;
+  push: boolean;
+}
+
 /**
  * Penerima: keluarga pemilik + tenaga medis berizin aktif, disaring dengan level minimum tiap user.
  * Kanal dashboard (baris di tb_notifikasi) dan push (FCM) diatur terpisah oleh preferensi masing-masing user.
+ * WhatsApp/email belum diimplementasi.
  */
-async function notifyRecipients(idAlert: bigint, idLansia: number, severity: Level, jenis: string) {
+export async function planRecipients(idLansia: number, severity: Level): Promise<Recipient[]> {
   const lansia = await prisma.lansia.findUnique({ where: { id: idLansia }, select: { idUserKeluarga: true, nama: true } });
-  if (!lansia) return;
+  if (!lansia) return [];
   const now = new Date();
   const grants = await prisma.accessGrant.findMany({
     where: { idLansia, status: "aktif", OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] },
@@ -172,24 +192,10 @@ async function notifyRecipients(idAlert: bigint, idLansia: number, severity: Lev
   const prefBy = new Map(prefs.map((p) => [p.idUser, p]));
 
   // Hanya user yang level minimumnya terpenuhi yang diberi tahu (lewat kanal apa pun).
-  const eligible = userIds.filter((id) => {
-    const min = (prefBy.get(id)?.levelMinimum ?? "sedang") as Level;
-    return ORDER[severity] >= (ORDER[min] ?? 1);
-  });
-
-  const rows = eligible
-    .filter((id) => prefBy.get(id)?.dashboard ?? true)
-    .map((id) => ({ idAlert, idUserPenerima: id, channel: "dashboard" as const, status: "terkirim" as const, waktuKirim: now }));
-  if (rows.length) await prisma.notification.createMany({ data: rows });
-
-  // Push (FCM): diproses di belakang supaya tidak menahan ingest. Tanpa kunci FCM, langkah ini tidak melakukan apa-apa.
-  const pushUsers = eligible.filter((id) => prefBy.get(id)?.push ?? true);
-  if (pushUsers.length) {
-    void sendPushToUsers(pushUsers, {
-      title: severity === "tinggi" ? `Peringatan: ${jenis}` : jenis,
-      body: `${jenis} pada ${lansia.nama}`,
-      data: { alertId: String(idAlert), elderId: String(idLansia), level: severity, type: jenis },
-    }).catch((e) => console.error("push", e));
-  }
-  // WhatsApp/email belum diimplementasi.
+  return userIds
+    .filter((id) => {
+      const min = (prefBy.get(id)?.levelMinimum ?? "sedang") as Level;
+      return ORDER[severity] >= (ORDER[min] ?? 1);
+    })
+    .map((id) => ({ userId: id, dashboard: prefBy.get(id)?.dashboard ?? true, push: prefBy.get(id)?.push ?? true }));
 }

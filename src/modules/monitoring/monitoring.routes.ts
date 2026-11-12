@@ -5,6 +5,7 @@ import prisma from "../../lib/prisma";
 import { Prisma } from "../../generated/prisma/client";
 import { authenticate, AuthRequest } from "../../common/middleware/auth.middleware";
 import { hashDeviceKey } from "../ingest/ingest.routes";
+import { ambilRiwayat, INTERVAL_MIN } from "../history/riwayat.service";
 
 /**
  * Route monitoring: lansia, perangkat, notifikasi, profil (/me).
@@ -308,6 +309,54 @@ router.get("/elders/:id/history", async (req: AuthRequest, res) => {
   }
 });
 
+router.get("/elders/:id/riwayat-kondisi", async (req: AuthRequest, res) => {
+  try {
+    const elder = await findElder(req, req.params.id);
+    if (!elder) return res.status(404).json({ success: false, message: "Lansia tidak ditemukan" });
+    const RANGES: Record<string, number> = { "6h": 6, "24h": 24, "7d": 168, "30d": 720 };
+    const range = typeof req.query.range === "string" && RANGES[req.query.range] ? req.query.range : "24h";
+    const limit = Math.min(Math.max(Number(req.query.limit) || 500, 1), 2000);
+    const rows = await ambilRiwayat(elder.id, new Date(Date.now() - RANGES[range] * 3600_000), limit);
+
+    const hitung = (st: string) => rows.filter((r) => r.status === st).length;
+    const hrs = rows.map((r) => r.detak_rata).filter((v): v is number => v !== null);
+    return res.json({
+      intervalMenit: INTERVAL_MIN,
+      range,
+      ringkasan: {
+        total: rows.length,
+        aman: hitung("aman"),
+        waspada: hitung("waspada"),
+        bahaya: hitung("bahaya"),
+        tidakAdaData: hitung("tidak_ada_data"),
+        detakRata: hrs.length ? Math.round((hrs.reduce((a, b) => a + b, 0) / hrs.length) * 10) / 10 : null,
+      },
+      items: rows.map((r) => ({
+        id: String(r.id),
+        waktu: new Date(r.waktu).toISOString(),
+        tanggal: fmtDate(new Date(r.waktu)),
+        jam: fmtTime(new Date(r.waktu)),
+        status: r.status,
+        dataJamAda: r.data_jam_ada,
+        detakRata: r.detak_rata,
+        detakMin: r.detak_min,
+        detakMaks: r.detak_maks,
+        spo2: r.spo2_rata,
+        suhu: r.suhu_rata,
+        hrv: r.hrv_rata,
+        skorRisiko: r.skor_risiko,
+        levelRisiko: r.level_risiko,
+        deteksiKamera: r.deteksi_kamera,
+        jatuh: r.jatuh_terdeteksi,
+        jumlahAlert: r.jumlah_alert,
+        ringkasan: r.ringkasan ?? "",
+      })),
+    });
+  } catch (e) {
+    return fail(res, e, "Gagal mengambil riwayat kondisi");
+  }
+});
+
 router.get("/elders/:id/vitals", async (req: AuthRequest, res) => {
   try {
     const elder = await findElder(req, req.params.id);
@@ -564,7 +613,8 @@ router.patch("/devices/:id", async (req: AuthRequest, res) => {
 router.get("/notifications", async (req: AuthRequest, res) => {
   try {
     const rows = await prisma.notification.findMany({
-      where: { idUserPenerima: req.user!.userId },
+      // Baris kanal push hanya catatan pengiriman (outbox), jangan ditampilkan sebagai notifikasi kedua.
+      where: { idUserPenerima: req.user!.userId, channel: "dashboard" },
       include: { alert: { include: { lansia: { select: { id: true, nama: true } } } } },
       orderBy: { id: "desc" },
       take: 100,
