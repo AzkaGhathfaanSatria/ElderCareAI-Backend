@@ -3,10 +3,65 @@ import { z } from "zod";
 import prisma from "../../lib/prisma";
 import { authenticate, AuthRequest } from "../../common/middleware/auth.middleware";
 import { decryptSecret, encryptSecret } from "./camera.crypto";
-import { detectStream, startCamera, stopCamera, StreamConfig, workerStatus } from "./camera.worker";
+import {
+  addPreviewViewer,
+  detectStream,
+  getLatestDetections,
+  getLatestFrame,
+  issuePreviewTicket,
+  previewBus,
+  removePreviewViewer,
+  startCamera,
+  stopCamera,
+  StreamConfig,
+  verifyPreviewTicket,
+  workerStatus,
+} from "./camera.worker";
 
 /** Pengaturan stream kamera (RTSP) dari halaman Perangkat. ID kamera memakai format "c-<id>". */
 const router = Router();
+
+/** Stream MJPEG live (~15 FPS) untuk tag <img>. Autentikasi memakai ticket singkat dari POST /stream/ticket. */
+router.get("/devices/:id/stream/mjpeg", (req, res) => {
+  const m = /^c-(\d+)$/.exec(String(req.params.id));
+  if (!m) return res.status(404).end();
+  const cameraId = Number(m[1]);
+  const ticket = typeof req.query.ticket === "string" ? req.query.ticket : undefined;
+  if (!verifyPreviewTicket(cameraId, ticket)) {
+    return res.status(401).json({ success: false, message: "Ticket stream tidak valid atau sudah kedaluwarsa" });
+  }
+
+  res.writeHead(200, {
+    "Content-Type": "multipart/x-mixed-replace; boundary=eldercareframe",
+    "Cache-Control": "no-store, no-cache, must-revalidate, private",
+    Connection: "keep-alive",
+    "X-Accel-Buffering": "no",
+  });
+
+  const CRLF = String.fromCharCode(13, 10);
+  const writeFrame = (frame: Buffer, contentType: string) => {
+    if (res.writableEnded || res.writableNeedDrain) return;
+    res.write(`--eldercareframe${CRLF}Content-Type: ${contentType}${CRLF}Content-Length: ${frame.length}${CRLF}${CRLF}`);
+    res.write(frame);
+    res.write(CRLF);
+  };
+
+  addPreviewViewer(cameraId);
+  const initial = getLatestFrame(cameraId);
+  if (initial) writeFrame(initial.frame, initial.contentType);
+
+  const onFrame = (payload: { frame: Buffer; contentType: string }) => {
+    writeFrame(payload.frame, payload.contentType);
+  };
+  const eventName = `preview:${cameraId}`;
+  previewBus.on(eventName, onFrame);
+
+  req.on("close", () => {
+    previewBus.off(eventName, onFrame);
+    removePreviewViewer(cameraId);
+  });
+});
+
 router.use(authenticate);
 
 function accessibleElderWhere(user: NonNullable<AuthRequest["user"]>) {
@@ -54,6 +109,7 @@ function dto(c: Awaited<ReturnType<typeof findCamera>> & object) {
     state: st.state,
     logs: st.logs,
     lastSeen: c.lastSeen?.toISOString() ?? null,
+    deteksi: getLatestDetections(c.id),
   };
 }
 
@@ -68,6 +124,29 @@ router.get("/devices/:id/stream", async (req: AuthRequest, res) => {
     if (!cam) return res.status(404).json({ success: false, message: "Kamera tidak ditemukan" });
     return res.json(dto(cam));
   } catch (e) { return fail(res, e, "Gagal mengambil pengaturan stream"); }
+});
+
+router.post("/devices/:id/stream/ticket", async (req: AuthRequest, res) => {
+  try {
+    const cam = await findCamera(req, String(req.params.id));
+    if (!cam) return res.status(404).json({ success: false, message: "Kamera tidak ditemukan" });
+    return res.json({ ticket: issuePreviewTicket(cam.id) });
+  } catch (e) { return fail(res, e, "Gagal membuat ticket stream"); }
+});
+
+router.get("/devices/:id/stream/frame", async (req: AuthRequest, res) => {
+  try {
+    const cam = await findCamera(req, String(req.params.id));
+    if (!cam) return res.status(404).json({ success: false, message: "Kamera tidak ditemukan" });
+    const latest = getLatestFrame(cam.id);
+    if (!latest) return res.json({ available: false, image: null, updatedAt: null, deteksi: [] });
+    return res.json({
+      available: true,
+      image: `data:${latest.contentType};base64,${latest.imageBase64}`,
+      updatedAt: latest.updatedAt,
+      deteksi: latest.deteksi,
+    });
+  } catch (e) { return fail(res, e, "Gagal mengambil frame kamera"); }
 });
 
 router.put("/devices/:id/stream", async (req: AuthRequest, res) => {
