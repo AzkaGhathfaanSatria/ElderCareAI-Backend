@@ -5,7 +5,7 @@ import prisma from "../../lib/prisma";
 import { publish } from "../../common/events";
 import { evaluateSensor, evaluateWearable, raiseFall } from "../alerts/alert.engine";
 import { inferPose, isFallClass } from "../../integrations/aiClient";
-import { INTERNAL_TOKEN } from "../camera/camera.worker";
+import { INTERNAL_TOKEN, setLatestFrame } from "../camera/camera.worker";
 
 export function hashDeviceKey(key: string) {
   return createHash("sha256").update(key).digest("hex");
@@ -196,12 +196,14 @@ router.post("/ingest/camera", cameraAuth, express.raw({ type: IMAGE_TYPES, limit
     }
     const { id: idKamera, idLansia } = req.camera!;
 
-    const pose = await inferPose(frame, req.header("content-type")!.split(";")[0]!);
+    const contentType = req.header("content-type")!.split(";")[0]!;
+    const pose = await inferPose(frame, contentType);
     if (!pose) return res.status(503).json({ success: false, message: "Layanan AI tidak tersedia. Coba kirim ulang." });
     await prisma.camera.update({ where: { id: idKamera }, data: { lastSeen: new Date() } });
 
     const falls = pose.deteksi.filter((d) => isFallClass(d.kelas) && d.confidence >= FALL_MIN_CONF);
     const summary = pose.deteksi.map((d) => ({ kelas: d.kelas, confidence: d.confidence }));
+    setLatestFrame(idKamera, frame, contentType, summary);
     if (falls.length === 0) {
       return res.json({ success: true, fall: false, fallFrames: 0, required: FALL_FRAMES_REQUIRED, alertRaised: false, deteksi: summary });
     }

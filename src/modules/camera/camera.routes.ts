@@ -3,7 +3,7 @@ import { z } from "zod";
 import prisma from "../../lib/prisma";
 import { authenticate, AuthRequest } from "../../common/middleware/auth.middleware";
 import { decryptSecret, encryptSecret } from "./camera.crypto";
-import { detectStream, startCamera, stopCamera, StreamConfig, workerStatus } from "./camera.worker";
+import { detectStream, getLatestFrame, startCamera, stopCamera, StreamConfig, workerStatus } from "./camera.worker";
 
 /** Pengaturan stream kamera (RTSP) dari halaman Perangkat. ID kamera memakai format "c-<id>". */
 const router = Router();
@@ -68,6 +68,21 @@ router.get("/devices/:id/stream", async (req: AuthRequest, res) => {
     if (!cam) return res.status(404).json({ success: false, message: "Kamera tidak ditemukan" });
     return res.json(dto(cam));
   } catch (e) { return fail(res, e, "Gagal mengambil pengaturan stream"); }
+});
+
+router.get("/devices/:id/stream/frame", async (req: AuthRequest, res) => {
+  try {
+    const cam = await findCamera(req, String(req.params.id));
+    if (!cam) return res.status(404).json({ success: false, message: "Kamera tidak ditemukan" });
+    const latest = getLatestFrame(cam.id);
+    if (!latest) return res.json({ available: false, image: null, updatedAt: null, deteksi: [] });
+    return res.json({
+      available: true,
+      image: `data:${latest.contentType};base64,${latest.imageBase64}`,
+      updatedAt: latest.updatedAt,
+      deteksi: latest.deteksi,
+    });
+  } catch (e) { return fail(res, e, "Gagal mengambil frame kamera"); }
 });
 
 router.put("/devices/:id/stream", async (req: AuthRequest, res) => {

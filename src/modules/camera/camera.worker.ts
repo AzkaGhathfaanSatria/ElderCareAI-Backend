@@ -40,6 +40,38 @@ interface Worker {
 
 const workers = new Map<number, Worker>();
 
+export interface LatestFrameEntry {
+  imageBase64: string;
+  contentType: string;
+  updatedAt: string;
+  deteksi: Array<{ kelas: string; confidence: number }>;
+}
+
+// Disimpan di memori saja (tidak pernah ditulis ke disk/DB/log) untuk live preview di halaman Perangkat.
+const latestFrames = new Map<number, LatestFrameEntry>();
+
+export function setLatestFrame(
+  cameraId: number,
+  frame: Buffer,
+  contentType: string,
+  deteksi: Array<{ kelas: string; confidence: number }>,
+) {
+  latestFrames.set(cameraId, {
+    imageBase64: frame.toString("base64"),
+    contentType,
+    updatedAt: new Date().toISOString(),
+    deteksi,
+  });
+}
+
+export function getLatestFrame(cameraId: number): LatestFrameEntry | null {
+  return latestFrames.get(cameraId) ?? null;
+}
+
+export function clearLatestFrame(cameraId: number) {
+  latestFrames.delete(cameraId);
+}
+
 export function buildRtspUrl(c: StreamConfig): string {
   const auth = c.user ? `${encodeURIComponent(c.user)}${c.pass ? ":" + encodeURIComponent(c.pass) : ""}@` : "";
   const port = c.port ? `:${c.port}` : "";
@@ -155,6 +187,7 @@ export async function stopCamera(cameraId: number, persist = true) {
     w.proc?.kill();
     w.state = "stopped";
   }
+  clearLatestFrame(cameraId);
   if (persist) await prisma.camera.update({ where: { id: cameraId }, data: { streamEnabled: false } });
 }
 
