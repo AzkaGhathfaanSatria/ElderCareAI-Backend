@@ -80,7 +80,7 @@ class LatestFrame:
 
     def __init__(self, source):
         self.source, self.cap = source, open_capture(source)
-        self.frame, self.lock, self.stop = None, threading.Lock(), False
+        self.frame, self.preview_frame, self.lock, self.stop = None, None, threading.Lock(), False
         self.last_ok = time.time()
         threading.Thread(target=self._run, daemon=True).start()
 
@@ -93,6 +93,7 @@ class LatestFrame:
             if ok:
                 with self.lock:
                     self.frame = frame
+                    self.preview_frame = frame
                 self.last_ok = time.time()
             else:
                 time.sleep(0.2)
@@ -109,6 +110,11 @@ class LatestFrame:
     def get(self):
         with self.lock:
             f, self.frame = self.frame, None
+        return f
+
+    def get_preview(self):
+        with self.lock:
+            f, self.preview_frame = self.preview_frame, None
         return f
 
 
@@ -173,6 +179,45 @@ def main():
     video_fps = (cap.get(cv2.CAP_PROP_FPS) or 25) if is_file else 0
     step = max(1, round(video_fps / a.fps)) if is_file else 1
 
+    preview_stop = threading.Event()
+    preview_state = {"active": False}
+
+    def preview_loop():
+        base = a.url.rstrip("/")
+        sess = requests.Session()
+        preview_period = 1.0 / 15.0  # jalur livecam murni ~15 FPS (terpisah dari inferensi AI)
+        last_poll = 0.0
+        while not preview_stop.is_set() and live is not None:
+            now = time.time()
+            if not preview_state["active"]:
+                if now - last_poll >= 0.8:
+                    last_poll = now
+                    try:
+                        pr = sess.get(f"{base}/ingest/camera/preview-status", headers=headers, timeout=3)
+                        if pr.status_code == 200:
+                            preview_state["active"] = bool(pr.json().get("previewActive"))
+                    except requests.RequestException:
+                        pass
+                time.sleep(0.15)
+                continue
+
+            started_p = time.time()
+            pf = live.get_preview()
+            if pf is not None:
+                pjpg = encode(pf, min(a.width or 640, 640), min(a.quality, 70))
+                if pjpg is not None:
+                    try:
+                        pr = sess.post(f"{base}/ingest/camera/preview", data=pjpg, headers=headers, timeout=3)
+                        if pr.status_code == 200:
+                            preview_state["active"] = bool(pr.json().get("previewActive"))
+                    except requests.RequestException:
+                        time.sleep(0.3)
+                        continue
+            time.sleep(max(0.005, preview_period - (time.time() - started_p)))
+
+    if live is not None and a.count == 0:
+        threading.Thread(target=preview_loop, daemon=True).start()
+
     sent = falls = alerts = errors = 0
     total_latency = 0.0
     shown_source = re.sub(r"//[^@/]+@", "//***@", a.source)  # sembunyikan user:password (di luar f-string agar jalan di Python < 3.12)
@@ -230,6 +275,8 @@ def main():
             sent += 1
             total_latency += lat
             body = r.json()
+            if body.get("previewActive") is not None:
+                preview_state["active"] = bool(body.get("previewActive"))
             if body.get("fall"):
                 falls += 1
             if body.get("alertRaised"):
@@ -244,6 +291,7 @@ def main():
     except KeyboardInterrupt:
         pass
     finally:
+        preview_stop.set()
         if live:
             live.stop = True
         if cap:

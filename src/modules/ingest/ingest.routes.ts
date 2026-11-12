@@ -5,7 +5,7 @@ import prisma from "../../lib/prisma";
 import { publish } from "../../common/events";
 import { evaluateSensor, evaluateWearable, raiseFall } from "../alerts/alert.engine";
 import { inferPose, isFallClass } from "../../integrations/aiClient";
-import { INTERNAL_TOKEN, setLatestFrame } from "../camera/camera.worker";
+import { hasPreviewViewer, INTERNAL_TOKEN, pushPreviewFrame, setLatestFrame } from "../camera/camera.worker";
 
 export function hashDeviceKey(key: string) {
   return createHash("sha256").update(key).digest("hex");
@@ -204,8 +204,9 @@ router.post("/ingest/camera", cameraAuth, express.raw({ type: IMAGE_TYPES, limit
     const falls = pose.deteksi.filter((d) => isFallClass(d.kelas) && d.confidence >= FALL_MIN_CONF);
     const summary = pose.deteksi.map((d) => ({ kelas: d.kelas, confidence: d.confidence }));
     setLatestFrame(idKamera, frame, contentType, summary);
+    const previewActive = hasPreviewViewer(idKamera);
     if (falls.length === 0) {
-      return res.json({ success: true, fall: false, fallFrames: 0, required: FALL_FRAMES_REQUIRED, alertRaised: false, deteksi: summary });
+      return res.json({ success: true, fall: false, fallFrames: 0, required: FALL_FRAMES_REQUIRED, alertRaised: false, previewActive, deteksi: summary });
     }
 
     const best = falls.reduce((a, b) => (b.confidence > a.confidence ? b : a));
@@ -230,11 +231,27 @@ router.post("/ingest/camera", cameraAuth, express.raw({ type: IMAGE_TYPES, limit
       const alert = await raiseFall({ idLansia, jenis: "Jatuh terdeteksi (kamera)", idDeteksi: row.id });
       alertRaised = Boolean(alert);
     }
-    return res.json({ success: true, fall: true, fallFrames, required: FALL_FRAMES_REQUIRED, alertRaised, deteksi: summary });
+    return res.json({ success: true, fall: true, fallFrames, required: FALL_FRAMES_REQUIRED, alertRaised, previewActive, deteksi: summary });
   } catch (e) {
     console.error("ingest camera", e);
     return res.status(500).json({ success: false, message: "Gagal memproses frame" });
   }
+});
+
+/** Status apakah ada browser yang sedang membuka Livecam (agar worker tidak buang CPU saat tidak ditonton). */
+router.get("/ingest/camera/preview-status", cameraAuth, (req: CameraRequest, res) => {
+  return res.json({ success: true, previewActive: hasPreviewViewer(req.camera!.id) });
+});
+
+/** Jalur video livecam murni (~15 FPS) tanpa lewat inferensi YOLO agar halus dan hemat CPU. */
+router.post("/ingest/camera/preview", cameraAuth, express.raw({ type: IMAGE_TYPES, limit: "4mb" }), (req: CameraRequest, res) => {
+  const frame = req.body as unknown;
+  if (!Buffer.isBuffer(frame) || frame.length === 0) {
+    return res.status(400).json({ success: false, message: "Frame kosong" });
+  }
+  const contentType = req.header("content-type")!.split(";")[0]!;
+  pushPreviewFrame(req.camera!.id, frame, contentType);
+  return res.json({ success: true, previewActive: hasPreviewViewer(req.camera!.id) });
 });
 
 export default router;
