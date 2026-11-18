@@ -1,5 +1,6 @@
 import { ChildProcess, spawn } from "child_process";
-import { randomBytes } from "crypto";
+import { randomBytes, timingSafeEqual } from "crypto";
+import { EventEmitter } from "events";
 import net from "net";
 import path from "path";
 import prisma from "../../lib/prisma";
@@ -39,6 +40,114 @@ interface Worker {
 }
 
 const workers = new Map<number, Worker>();
+
+export interface LatestFrameEntry {
+  frame: Buffer;
+  imageBase64: string;
+  contentType: string;
+  updatedAt: string;
+  deteksi: Array<{ kelas: string; confidence: number }>;
+}
+
+// Disimpan di memori saja (tidak pernah ditulis ke disk/DB/log) untuk live preview di halaman Perangkat.
+const latestFrames = new Map<number, LatestFrameEntry>();
+const latestDetections = new Map<number, Array<{ kelas: string; confidence: number }>>();
+const previewViewers = new Map<number, number>();
+const previewTickets = new Map<string, { cameraId: number; expiresAt: number }>();
+export const previewBus = new EventEmitter();
+previewBus.setMaxListeners(100);
+
+export function setLatestFrame(
+  cameraId: number,
+  frame: Buffer,
+  contentType: string,
+  deteksi: Array<{ kelas: string; confidence: number }>,
+) {
+  latestDetections.set(cameraId, deteksi);
+  const prev = latestFrames.get(cameraId);
+  latestFrames.set(cameraId, {
+    frame,
+    imageBase64: frame.toString("base64"),
+    contentType,
+    updatedAt: new Date().toISOString(),
+    deteksi: deteksi.length ? deteksi : (prev?.deteksi ?? []),
+  });
+}
+
+export function pushPreviewFrame(cameraId: number, frame: Buffer, contentType: string) {
+  const deteksi = latestDetections.get(cameraId) ?? [];
+  const prev = latestFrames.get(cameraId);
+  latestFrames.set(cameraId, {
+    frame,
+    imageBase64: prev?.imageBase64 ?? "",
+    contentType,
+    updatedAt: new Date().toISOString(),
+    deteksi,
+  });
+  previewBus.emit(`preview:${cameraId}`, { frame, contentType });
+}
+
+export function getLatestFrame(cameraId: number): LatestFrameEntry | null {
+  const entry = latestFrames.get(cameraId);
+  if (!entry) return null;
+  if (!entry.imageBase64) {
+    entry.imageBase64 = entry.frame.toString("base64");
+  }
+  return entry;
+}
+
+export function getLatestDetections(cameraId: number) {
+  return latestDetections.get(cameraId) ?? [];
+}
+
+export function addPreviewViewer(cameraId: number) {
+  previewViewers.set(cameraId, (previewViewers.get(cameraId) ?? 0) + 1);
+}
+
+export function removePreviewViewer(cameraId: number) {
+  const next = Math.max(0, (previewViewers.get(cameraId) ?? 0) - 1);
+  if (next === 0) previewViewers.delete(cameraId);
+  else previewViewers.set(cameraId, next);
+}
+
+export function hasPreviewViewer(cameraId: number) {
+  return (previewViewers.get(cameraId) ?? 0) > 0;
+}
+
+export function issuePreviewTicket(cameraId: number): string {
+  const now = Date.now();
+  for (const [k, v] of previewTickets.entries()) {
+    if (v.expiresAt <= now) previewTickets.delete(k);
+  }
+  const ticket = randomBytes(24).toString("hex");
+  previewTickets.set(ticket, { cameraId, expiresAt: now + 5 * 60_000 });
+  return ticket;
+}
+
+export function verifyPreviewTicket(cameraId: number, ticket: string | undefined): boolean {
+  if (!ticket) return false;
+  const now = Date.now();
+  for (const [k, v] of previewTickets.entries()) {
+    if (v.expiresAt <= now) previewTickets.delete(k);
+  }
+  for (const [k, v] of previewTickets.entries()) {
+    const a = Buffer.from(k);
+    const b = Buffer.from(ticket);
+    if (a.length === b.length && timingSafeEqual(a, b)) {
+      return v.cameraId === cameraId && v.expiresAt > now;
+    }
+  }
+  return false;
+}
+
+export function clearLatestFrame(cameraId: number) {
+  latestFrames.delete(cameraId);
+  latestDetections.delete(cameraId);
+  previewViewers.delete(cameraId);
+  for (const [k, v] of previewTickets.entries()) {
+    if (v.cameraId === cameraId) previewTickets.delete(k);
+  }
+}
 
 export function buildRtspUrl(c: StreamConfig): string {
   const auth = c.user ? `${encodeURIComponent(c.user)}${c.pass ? ":" + encodeURIComponent(c.pass) : ""}@` : "";
@@ -155,6 +264,7 @@ export async function stopCamera(cameraId: number, persist = true) {
     w.proc?.kill();
     w.state = "stopped";
   }
+  clearLatestFrame(cameraId);
   if (persist) await prisma.camera.update({ where: { id: cameraId }, data: { streamEnabled: false } });
 }
 
